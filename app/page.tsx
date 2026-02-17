@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { GenerateResponse } from "@/lib/types";
+import { RadarChart } from "@/components/RadarChart";
 
 // Format options
 const FORMATS = [
@@ -239,19 +240,8 @@ function ReportCard({ data }: { data: GenerateResponse }) {
         </p>
       )}
 
-      {/* Category Scores */}
-      <div className="grid grid-cols-4 gap-4 text-center">
-        {Object.entries(category_scores).map(([cat, val]) => (
-          <div key={cat}>
-            <p className="text-2xl font-bold text-[var(--text-primary)]">
-              {val.toFixed(1)}
-            </p>
-            <p className="text-xs text-[var(--text-tertiary)] uppercase tracking-wider">
-              {cat}
-            </p>
-          </div>
-        ))}
-      </div>
+      {/* Radar Chart */}
+      <RadarChart data={category_scores} size={260} />
 
       {/* All 14 Dimension Bars */}
       <div className="space-y-6">
