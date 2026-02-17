@@ -1,24 +1,33 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Syne, Plus_Jakarta_Sans, Fira_Code } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({
+const syne = Syne({
   subsets: ["latin"],
-  variable: "--font-inter",
+  variable: "--font-heading",
+  weight: ["600", "700"],
+});
+
+const plusJakarta = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  variable: "--font-body",
+  weight: ["400", "500", "600"],
+});
+
+const firaCode = Fira_Code({
+  subsets: ["latin"],
+  variable: "--font-mono",
+  weight: ["400", "500"],
 });
 
 export const metadata: Metadata = {
-  title: "ScriptKit — Grade Your Scripts",
-  description: "Write and grade scripts for TikTok, Reels, and Shorts. Get hook strength, virality scores, and rewrites that actually sound human.",
+  title: "scriptkit — scripts people actually watch till the end",
+  description:
+    "Drop your idea, get a script built on what actually works. 9-module script engine, scored on 14 dimensions, anti-AI filter.",
   openGraph: {
-    title: "ScriptKit — Grade Your Scripts",
-    description: "Stop writing mid scripts. Grade, fix, ship.",
+    title: "scriptkit — scripts people actually watch till the end",
+    description: "Drop your idea, get a script built on what actually works.",
     type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "ScriptKit — Grade Your Scripts",
-    description: "Stop writing mid scripts. Grade, fix, ship.",
   },
 };
 
@@ -29,7 +38,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} font-sans antialiased`}>
+      <body
+        className={`${syne.variable} ${plusJakarta.variable} ${firaCode.variable} font-sans antialiased`}
+      >
         {children}
       </body>
     </html>
