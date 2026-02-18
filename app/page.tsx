@@ -771,9 +771,11 @@ export default function Home() {
           <span className="text-lg font-semibold text-[var(--text-primary)]">
             scriptkit
           </span>
+{/* Credits badge - hidden for now
           <span className="text-sm text-[var(--text-tertiary)] border border-[var(--border-default)] rounded-full px-3 py-1">
             ⚡ 20 credits
           </span>
+*/}
         </div>
       </nav>
 
@@ -915,7 +917,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Credits Section */}
+      {/* Credits Section - collapsed for now */}
+      {/* TODO: Re-enable when Stripe is wired up
       <section className="border-t border-[var(--border-default)] py-20">
         <div className="max-w-5xl mx-auto px-6">
           <h2 className="text-3xl font-bold text-[var(--text-primary)] mb-2">credits</h2>
@@ -944,6 +947,7 @@ export default function Home() {
           </p>
         </div>
       </section>
+      */}
 
       {/* FAQ Section */}
       <section className="border-t border-[var(--border-default)] py-20">
