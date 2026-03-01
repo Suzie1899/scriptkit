@@ -86,79 +86,84 @@ export default function Home() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      {/* Main Content Area */}
-      <div className="flex-1 flex flex-col md:flex-row">
-        {/* Mobile: Folders at top in 2x2 grid, Desktop: Left Sidebar */}
-        <aside className="w-full md:w-48 flex flex-col items-center justify-center py-8 px-6 md:py-12">
-          <div className="grid grid-cols-2 gap-6 md:flex md:flex-col md:gap-12 w-full max-w-sm md:max-w-none">
-            {FOLDERS.map((folder) => (
-              <button
-                key={folder.id}
-                onMouseEnter={() => setHoveredFolder(folder.id)}
-                onMouseLeave={() => setHoveredFolder(null)}
-                onClick={() => handleFolderClick(folder.id)}
-                className="focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-4 flex justify-center"
-                style={{ 
-                  outlineColor: folder.color
-                }}
-              >
-                <FolderIcon 
-                  color={folder.color} 
-                  label={folder.label}
-                  isHovered={hoveredFolder === folder.id}
-                  isActive={openTool === folder.id}
-                />
-              </button>
-            ))}
-          </div>
-        </aside>
+      {/* Main Content Area - Mobile: centered column, Desktop: sidebar + center */}
+      <div className="flex-1 flex flex-col md:flex-row items-center justify-center">
+        
+        {/* Mobile: Everything stacked and centered */}
+        <div className="flex flex-col items-center justify-center w-full md:contents">
+          
+          {/* Mobile: Folders in 2x2 grid, Desktop: Left Sidebar */}
+          <aside className="w-full md:w-48 flex flex-col items-center md:justify-center py-6 px-6 md:py-12 md:h-full md:absolute md:left-0 md:top-0">
+            <div className="grid grid-cols-2 gap-4 md:flex md:flex-col md:gap-12 w-full max-w-[200px] md:max-w-none">
+              {FOLDERS.map((folder) => (
+                <button
+                  key={folder.id}
+                  onMouseEnter={() => setHoveredFolder(folder.id)}
+                  onMouseLeave={() => setHoveredFolder(null)}
+                  onClick={() => handleFolderClick(folder.id)}
+                  className="focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-4 flex justify-center"
+                  style={{ 
+                    outlineColor: folder.color
+                  }}
+                >
+                  <FolderIcon 
+                    color={folder.color} 
+                    label={folder.label}
+                    isHovered={hoveredFolder === folder.id}
+                    isActive={openTool === folder.id}
+                  />
+                </button>
+              ))}
+            </div>
+          </aside>
 
-        {/* Center Content */}
-        <main className="flex-1 flex flex-col items-center justify-center px-6 md:px-12 pb-12 md:pb-0">
-          {/* Logo - Elegant italic serif like Stitch mockup */}
-          <h1 
-            className="mb-4 md:mb-6 text-center"
-            style={{
-              fontFamily: 'Playfair Display, serif',
-              fontStyle: 'italic',
-              fontWeight: 600,
-              fontSize: 'clamp(36px, 10vw, 88px)',
-              lineHeight: '1.1',
-              color: '#2C2318',
-              letterSpacing: '-0.02em'
-            }}
-          >
-            scriptkit
-          </h1>
+          {/* Center Content - Logo & Tagline */}
+          <main className="flex flex-col items-center justify-center px-6 md:px-12 py-8 md:py-0">
+            {/* Logo - Elegant italic serif like Stitch mockup */}
+            <h1 
+              className="mb-3 md:mb-6 text-center"
+              style={{
+                fontFamily: 'Playfair Display, serif',
+                fontStyle: 'italic',
+                fontWeight: 600,
+                fontSize: 'clamp(40px, 12vw, 88px)',
+                lineHeight: '1.1',
+                color: '#2C2318',
+                letterSpacing: '-0.02em'
+              }}
+            >
+              scriptkit
+            </h1>
 
-          {/* Tagline - Light letterspaced small caps like Stitch */}
-          <p 
-            className="mb-8 md:mb-12 text-center px-4"
-            style={{
-              fontFamily: 'system-ui, -apple-system, sans-serif',
-              fontSize: 'clamp(10px, 2.5vw, 13px)',
-              fontWeight: 400,
-              color: '#8A8075',
-              letterSpacing: '0.25em',
-              textTransform: 'uppercase'
-            }}
-          >
-            CREATOR TOOLS THAT ACTUALLY WORK.
-          </p>
+            {/* Tagline - Light letterspaced small caps like Stitch */}
+            <p 
+              className="mb-4 md:mb-8 text-center px-4"
+              style={{
+                fontFamily: 'system-ui, -apple-system, sans-serif',
+                fontSize: 'clamp(9px, 2.5vw, 13px)',
+                fontWeight: 400,
+                color: '#8A8075',
+                letterSpacing: '0.2em',
+                textTransform: 'uppercase'
+              }}
+            >
+              CREATOR TOOLS THAT ACTUALLY WORK.
+            </p>
 
-          {/* Bottom instruction */}
-          <p 
-            className="mt-auto mb-8 md:mb-12 text-center"
-            style={{
-              fontFamily: 'Playfair Display, serif',
-              fontStyle: 'italic',
-              fontSize: 'clamp(14px, 3vw, 16px)',
-              color: 'var(--text-tertiary)'
-            }}
-          >
-            select a tool to begin
-          </p>
-        </main>
+            {/* Bottom instruction */}
+            <p 
+              className="text-center"
+              style={{
+                fontFamily: 'Playfair Display, serif',
+                fontStyle: 'italic',
+                fontSize: 'clamp(13px, 3vw, 16px)',
+                color: 'var(--text-tertiary)'
+              }}
+            >
+              select a tool to begin
+            </p>
+          </main>
+        </div>
       </div>
 
       {/* Footer */}
