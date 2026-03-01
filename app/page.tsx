@@ -6,11 +6,18 @@ import { RadarChart } from "@/components/RadarChart";
 
 // Tab definitions
 const TABS = [
-  { id: "script", label: "script", description: "write a new script" },
-  { id: "repurpose", label: "repurpose", description: "adapt for other platforms" },
-  { id: "analyze", label: "analyze", description: "why did this perform?" },
-  { id: "hooks", label: "hooks", description: "scroll-stopping openers" },
+  { id: "script", label: "script" },
+  { id: "hooks", label: "hooks" },
+  { id: "repurpose", label: "repurpose" },
+  { id: "analyze", label: "analyze" },
 ];
+
+const TAB_DESCRIPTIONS: Record<string, string> = {
+  script: "write a new script",
+  hooks: "scroll-stopping openers",
+  repurpose: "adapt for other platforms",
+  analyze: "why did this perform?",
+};
 
 // Format options
 const FORMATS = [
@@ -72,19 +79,11 @@ const FAQ_ITEMS = [
   },
   {
     q: "how is this different from chatgpt?",
-    a: "chatgpt gives you a script. we give you a report card — letter grade, radar chart, diagnosis, rewrites. system, not chatbot.",
-  },
-  {
-    q: "what do the formats mean?",
-    a: "each format loads a different architecture. skits need setup-twist-punchline. voxpops need question design. the engine adapts.",
+    a: "chatgpt gives you a script. we give you a report card — letter grade, radar chart, diagnosis, rewrites.",
   },
   {
     q: "why are the scores so harsh?",
-    a: "honest scores help you improve. a 7 means a pro would post this. most first drafts score 50-65. that's normal.",
-  },
-  {
-    q: "can i pick my voice?",
-    a: "yes. 12 tones from casual to cinematic. if it sounds like ai, the filter catches it.",
+    a: "honest scores help you improve. a 7 means a pro would post this. most first drafts score 50-65.",
   },
   {
     q: "how long does it take?",
@@ -110,9 +109,9 @@ const BADGE_EMOJI: Record<string, string> = {
 };
 
 const GRADE_COLORS: Record<string, string> = {
-  S: "text-[var(--sage)]",
-  A: "text-[var(--sage)]",
-  B: "text-[var(--dusty-blue)]",
+  S: "text-[var(--forest)]",
+  A: "text-[var(--forest)]",
+  B: "text-[var(--forest-light)]",
   C: "text-[var(--warning)]",
   D: "text-[var(--terracotta)]",
   F: "text-[var(--danger)]",
@@ -189,10 +188,9 @@ function ScoreBar({
   badgeName?: string;
 }) {
   const getColorClass = (s: number) => {
-    if (s >= 9) return "sage";
-    if (s >= 7) return "sage";
-    if (s >= 5) return "blue";
-    return "terracotta";
+    if (s >= 7) return "forest";
+    if (s >= 5) return "terracotta";
+    return "warning";
   };
 
   const badge =
@@ -224,10 +222,9 @@ function ReportCard({ data }: { data: GenerateResponse }) {
 
   return (
     <div className="card p-8 space-y-8">
-      {/* Grade + Score Header */}
       <div className="flex items-center justify-between">
         <div>
-          <span className={`text-7xl font-serif ${GRADE_COLORS[score.letter_grade]}`}>
+          <span className={`text-7xl font-serif italic ${GRADE_COLORS[score.letter_grade]}`}>
             {score.letter_grade}
           </span>
         </div>
@@ -242,31 +239,21 @@ function ReportCard({ data }: { data: GenerateResponse }) {
         </div>
       </div>
 
-      {/* Badges */}
       {badges.length > 0 && (
         <div className="flex flex-wrap gap-2">
           {badges.map((badge) => (
-            <span key={badge} className="badge sage">
+            <span key={badge} className="badge forest">
               {BADGE_EMOJI[badge] || "🏆"} {badge}
             </span>
           ))}
         </div>
       )}
-      {badges.length === 0 && (
-        <p className="text-sm text-[var(--text-tertiary)]">
-          no badges yet — scores of 9+ earn badges
-        </p>
-      )}
 
-      {/* Radar Chart */}
       <RadarChart data={category_scores} size={260} />
 
-      {/* All 14 Dimension Bars */}
       <div className="space-y-6">
         <div className="space-y-3">
-          <p className="text-xs text-[var(--text-tertiary)] uppercase tracking-wider font-medium">
-            structure
-          </p>
+          <p className="text-xs text-[var(--text-tertiary)] uppercase tracking-wider font-medium">structure</p>
           <ScoreBar label="hook strength" score={score.hook_strength} badgeName="sniper hook" />
           <ScoreBar label="escalation logic" score={score.escalation_logic} badgeName="perfect build" />
           <ScoreBar label="pacing & rhythm" score={score.pacing_rhythm} badgeName="great rhythm" />
@@ -274,9 +261,7 @@ function ReportCard({ data }: { data: GenerateResponse }) {
         </div>
 
         <div className="space-y-3">
-          <p className="text-xs text-[var(--text-tertiary)] uppercase tracking-wider font-medium">
-            substance
-          </p>
+          <p className="text-xs text-[var(--text-tertiary)] uppercase tracking-wider font-medium">substance</p>
           <ScoreBar label="specificity" score={score.specificity} badgeName="razor specific" />
           <ScoreBar label="originality" score={score.originality} badgeName="fresh angle" />
           <ScoreBar label="emotional trigger" score={score.emotional_trigger_accuracy} badgeName="hits different" />
@@ -284,9 +269,7 @@ function ReportCard({ data }: { data: GenerateResponse }) {
         </div>
 
         <div className="space-y-3">
-          <p className="text-xs text-[var(--text-tertiary)] uppercase tracking-wider font-medium">
-            impact
-          </p>
+          <p className="text-xs text-[var(--text-tertiary)] uppercase tracking-wider font-medium">impact</p>
           <ScoreBar label="relatability" score={score.relatability} badgeName="mirror moment" />
           <ScoreBar label="quotability" score={score.quotability} badgeName="quotable" />
           <ScoreBar label="virality" score={score.virality} badgeName="would share" />
@@ -294,9 +277,7 @@ function ReportCard({ data }: { data: GenerateResponse }) {
         </div>
 
         <div className="space-y-3">
-          <p className="text-xs text-[var(--text-tertiary)] uppercase tracking-wider font-medium">
-            authenticity
-          </p>
+          <p className="text-xs text-[var(--text-tertiary)] uppercase tracking-wider font-medium">authenticity</p>
           <ScoreBar label="conversational feel" score={score.conversational_feel} badgeName="sounds human" />
           <ScoreBar label="visual potential" score={score.visual_potential} badgeName="cinematic" />
         </div>
@@ -305,12 +286,7 @@ function ReportCard({ data }: { data: GenerateResponse }) {
   );
 }
 
-// Tab Content Components
-function ScriptTab({
-  onResult,
-}: {
-  onResult: (data: GenerateResponse) => void;
-}) {
+function ScriptTab({ onResult }: { onResult: (data: GenerateResponse) => void }) {
   const [topic, setTopic] = useState("");
   const [format, setFormat] = useState("talking head");
   const [platform, setPlatform] = useState("reels");
@@ -332,44 +308,25 @@ function ScriptTab({
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          topic,
-          format,
-          platform,
-          tone,
+          topic, format, platform, tone,
           emotionalTrigger: emotionalTrigger || undefined,
           targetViewer: targetViewer || undefined,
           realAnchors: realAnchors || undefined,
-          includeVisualDirection:
-            format.includes("b-roll") ||
-            format === "skit" ||
-            format === "montage" ||
-            format === "ELI5",
+          includeVisualDirection: format.includes("b-roll") || format === "skit" || format === "montage" || format === "ELI5",
         }),
       });
-
       const data = await res.json();
-
-      if (!res.ok) {
-        setError(data.error || "something went wrong. try again.");
-        return;
-      }
-
+      if (!res.ok) { setError(data.error || "something went wrong."); return; }
       onResult(data);
-    } catch {
-      setError("something went wrong. try again.");
-    } finally {
-      setLoading(false);
-    }
+    } catch { setError("something went wrong."); }
+    finally { setLoading(false); }
   };
 
   return (
-    <div className="space-y-6">
-      <div className="grid md:grid-cols-2 gap-6">
-        {/* Left - Textarea */}
+    <div className="space-y-8">
+      <div className="grid md:grid-cols-2 gap-8">
         <div>
-          <label className="block text-xs text-[var(--text-tertiary)] uppercase tracking-wider font-medium mb-2">
-            your idea
-          </label>
+          <label className="block text-sm text-[var(--text-secondary)] mb-2">your idea</label>
           <textarea
             value={topic}
             onChange={(e) => setTopic(e.target.value)}
@@ -378,74 +335,116 @@ function ScriptTab({
           />
         </div>
 
-        {/* Right - Parameters */}
-        <div className="space-y-5">
-          <div className="space-y-2">
-            <label className="text-xs text-[var(--text-tertiary)] uppercase tracking-wider font-medium">format</label>
+        <div className="space-y-6">
+          <div>
+            <label className="block text-sm text-[var(--text-secondary)] mb-2">format</label>
             <PillSelector options={FORMATS} selected={format} onSelect={(v) => v && setFormat(v as string)} />
           </div>
 
-          <div className="space-y-2">
-            <label className="text-xs text-[var(--text-tertiary)] uppercase tracking-wider font-medium">platform</label>
+          <div>
+            <label className="block text-sm text-[var(--text-secondary)] mb-2">platform</label>
             <PillSelector options={PLATFORMS} selected={platform} onSelect={(v) => v && setPlatform(v as string)} />
           </div>
 
-          <div className="space-y-2">
-            <label className="text-xs text-[var(--text-tertiary)] uppercase tracking-wider font-medium">tone</label>
+          <div>
+            <label className="block text-sm text-[var(--text-secondary)] mb-2">tone</label>
             <PillSelector options={TONES} selected={tone} onSelect={(v) => v && setTone(v as string)} />
           </div>
 
-          <div className="space-y-2">
-            <label className="text-xs text-[var(--text-tertiary)] uppercase tracking-wider font-medium">emotional trigger</label>
+          <div>
+            <label className="block text-sm text-[var(--text-secondary)] mb-2">emotional trigger</label>
             <PillSelector options={EMOTIONAL_TRIGGERS} selected={emotionalTrigger} onSelect={(v) => setEmotionalTrigger(v as string | null)} allowNone />
-            {!emotionalTrigger && (
-              <p className="text-xs text-[var(--text-tertiary)]">auto — engine picks the best trigger</p>
-            )}
+            {!emotionalTrigger && <p className="text-xs text-[var(--text-tertiary)] mt-1">auto — engine picks</p>}
           </div>
 
-          <button
-            onClick={() => setShowContext(!showContext)}
-            className="text-sm text-[var(--accent)] hover:opacity-80 transition-opacity"
-          >
-            {showContext ? "− hide context" : "+ add context for a better script"}
+          <button onClick={() => setShowContext(!showContext)} className="text-sm link">
+            {showContext ? "− hide context" : "+ add context"}
           </button>
 
           {showContext && (
             <div className="space-y-4 pt-4 border-t border-[var(--border-default)]">
-              <div className="space-y-2">
-                <label className="text-xs text-[var(--text-tertiary)] uppercase tracking-wider font-medium">who&apos;s watching?</label>
-                <textarea
-                  value={targetViewer}
-                  onChange={(e) => setTargetViewer(e.target.value)}
-                  placeholder="e.g. aspiring creators who want to grow but don't know what to post"
-                  className="textarea h-20 text-sm"
-                />
+              <div>
+                <label className="block text-sm text-[var(--text-secondary)] mb-2">who&apos;s watching?</label>
+                <textarea value={targetViewer} onChange={(e) => setTargetViewer(e.target.value)} placeholder="e.g. aspiring creators who want to grow" className="textarea h-20 text-sm" />
               </div>
-              <div className="space-y-2">
-                <label className="text-xs text-[var(--text-tertiary)] uppercase tracking-wider font-medium">real details to include</label>
-                <textarea
-                  value={realAnchors}
-                  onChange={(e) => setRealAnchors(e.target.value)}
-                  placeholder="names, numbers, stories — real details make the script 10x better"
-                  className="textarea h-20 text-sm"
-                />
+              <div>
+                <label className="block text-sm text-[var(--text-secondary)] mb-2">real details</label>
+                <textarea value={realAnchors} onChange={(e) => setRealAnchors(e.target.value)} placeholder="names, numbers, stories" className="textarea h-20 text-sm" />
               </div>
             </div>
           )}
         </div>
       </div>
 
-      <button
-        onClick={handleGenerate}
-        disabled={!topic.trim() || loading}
-        className="btn-primary w-full"
-      >
+      <button onClick={handleGenerate} disabled={!topic.trim() || loading} className="btn-primary w-full">
         {loading ? "engineering your script..." : "generate script"}
       </button>
 
-      {error && (
-        <div className="p-4 bg-[var(--terracotta-muted)] border border-[var(--terracotta)] rounded-lg text-[var(--text-primary)] text-sm">
-          {error}
+      {error && <div className="p-4 bg-[var(--terracotta-muted)] rounded-lg text-[var(--text-primary)] text-sm">{error}</div>}
+    </div>
+  );
+}
+
+function HooksTab() {
+  const [topic, setTopic] = useState("");
+  const [audience, setAudience] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [hooks, setHooks] = useState<Array<{ hook: string; type: string; why: string }> | null>(null);
+
+  const handleGenerate = async () => {
+    if (!topic.trim()) return;
+    setLoading(true);
+    setTimeout(() => {
+      setHooks([
+        { hook: "Stop waking up at 5am if you want to be productive.", type: "contrarian", why: "Challenges belief" },
+        { hook: "I wasted 3 years doing this wrong.", type: "confession", why: "Vulnerability + timeframe" },
+        { hook: "The reason you're tired isn't sleep.", type: "curiosity gap", why: "Opens a loop" },
+        { hook: "If you're a creator making under $10k/month, this is why.", type: "identity call", why: "Specific audience" },
+        { hook: "Nobody's talking about this yet.", type: "FOMO", why: "Exclusivity" },
+      ]);
+      setLoading(false);
+    }, 1500);
+  };
+
+  return (
+    <div className="space-y-8">
+      <div className="grid md:grid-cols-2 gap-8">
+        <div>
+          <label className="block text-sm text-[var(--text-secondary)] mb-2">topic</label>
+          <textarea value={topic} onChange={(e) => setTopic(e.target.value)} placeholder="what's your video about?" className="textarea h-60" />
+        </div>
+        <div>
+          <label className="block text-sm text-[var(--text-secondary)] mb-2">audience (optional)</label>
+          <textarea value={audience} onChange={(e) => setAudience(e.target.value)} placeholder="who specifically is this for?" className="textarea h-32" />
+          <div className="mt-4 p-4 bg-[var(--bg-elevated)] rounded-lg">
+            <p className="text-xs text-[var(--text-tertiary)] mb-2">hook formulas:</p>
+            <div className="flex flex-wrap gap-2">
+              {["contrarian", "confession", "curiosity gap", "identity call", "FOMO"].map(f => (
+                <span key={f} className="badge muted">{f}</span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <button onClick={handleGenerate} disabled={!topic.trim() || loading} className="btn-primary w-full">
+        {loading ? "generating..." : "generate hooks"}
+      </button>
+
+      {hooks && (
+        <div className="space-y-4">
+          {hooks.map((item, i) => (
+            <div key={i} className="card p-5">
+              <div className="flex items-start justify-between gap-4 mb-3">
+                <p className="text-lg text-[var(--text-primary)]">&quot;{item.hook}&quot;</p>
+                <button className="text-sm link shrink-0">copy</button>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className="badge forest">{item.type}</span>
+                <span className="text-sm text-[var(--text-tertiary)]">{item.why}</span>
+              </div>
+            </div>
+          ))}
         </div>
       )}
     </div>
@@ -461,72 +460,38 @@ function RepurposeTab() {
   const handleRepurpose = async () => {
     if (!content.trim() || targetPlatforms.length === 0) return;
     setLoading(true);
-    
     setTimeout(() => {
       setResults({
-        twitter: "🧵 Thread version would go here...\n\n1/ Key insight from your content\n2/ Supporting point\n3/ The takeaway",
-        linkedin: "Here's a story about [topic]...\n\nWhen I first started, I thought [common belief].\n\nThen I learned [insight].\n\nThe lesson? [takeaway]\n\n#relevanthashtag",
+        twitter: "🧵 Thread version...\n\n1/ Key insight\n2/ Supporting point\n3/ The takeaway",
+        linkedin: "Here's a story about [topic]...\n\nWhen I first started...\n\nThe lesson? [takeaway]",
       });
       setLoading(false);
     }, 1500);
   };
 
   return (
-    <div className="space-y-6">
-      <div className="grid md:grid-cols-2 gap-6">
+    <div className="space-y-8">
+      <div className="grid md:grid-cols-2 gap-8">
         <div>
-          <label className="block text-xs text-[var(--text-tertiary)] uppercase tracking-wider font-medium mb-2">
-            original content
-          </label>
-          <textarea
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            placeholder="paste your content here — a script, a blog post, a tweet that worked..."
-            className="textarea h-80"
-          />
+          <label className="block text-sm text-[var(--text-secondary)] mb-2">original content</label>
+          <textarea value={content} onChange={(e) => setContent(e.target.value)} placeholder="paste your content..." className="textarea h-80" />
         </div>
-
-        <div className="space-y-6">
-          <div>
-            <label className="text-xs text-[var(--text-tertiary)] uppercase tracking-wider font-medium">repurpose for</label>
-            <p className="text-sm text-[var(--text-tertiary)] mt-1 mb-3">select platforms to adapt your content for</p>
-            
-            <PillSelector
-              options={REPURPOSE_PLATFORMS}
-              selected={targetPlatforms}
-              onSelect={(v) => setTargetPlatforms(v as string[])}
-              multi
-            />
-          </div>
-
-          <div className="p-4 bg-[var(--bg-elevated)] rounded-lg">
-            <p className="text-xs text-[var(--text-tertiary)] mb-2">each platform gets:</p>
-            <ul className="text-sm text-[var(--text-secondary)] space-y-1">
-              <li>• native format & length</li>
-              <li>• platform-specific tone</li>
-              <li>• optimized hooks</li>
-            </ul>
-          </div>
+        <div>
+          <label className="block text-sm text-[var(--text-secondary)] mb-2">repurpose for</label>
+          <PillSelector options={REPURPOSE_PLATFORMS} selected={targetPlatforms} onSelect={(v) => setTargetPlatforms(v as string[])} multi />
         </div>
       </div>
 
-      <button
-        onClick={handleRepurpose}
-        disabled={!content.trim() || targetPlatforms.length === 0 || loading}
-        className="btn-primary w-full"
-      >
-        {loading ? "shapeshifting..." : `repurpose for ${targetPlatforms.length} platform${targetPlatforms.length !== 1 ? 's' : ''}`}
+      <button onClick={handleRepurpose} disabled={!content.trim() || targetPlatforms.length === 0 || loading} className="btn-primary w-full">
+        {loading ? "shapeshifting..." : `repurpose for ${targetPlatforms.length} platforms`}
       </button>
 
       {results && (
         <div className="space-y-4">
           {Object.entries(results).map(([platform, text]) => (
             <div key={platform} className="card p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h4 className="font-medium text-[var(--text-primary)] capitalize">{platform}</h4>
-                <button className="text-sm text-[var(--accent)] hover:opacity-80">copy</button>
-              </div>
-              <p className="text-[var(--text-primary)] whitespace-pre-wrap">{text}</p>
+              <h4 className="font-medium text-[var(--text-primary)] mb-3 capitalize">{platform}</h4>
+              <p className="text-[var(--text-secondary)] whitespace-pre-wrap">{text}</p>
             </div>
           ))}
         </div>
@@ -537,209 +502,54 @@ function RepurposeTab() {
 
 function AnalyzeTab() {
   const [content, setContent] = useState("");
-  const [metrics, setMetrics] = useState({ views: "", likes: "", shares: "", comments: "" });
   const [loading, setLoading] = useState(false);
-  const [analysis, setAnalysis] = useState<{
-    topFactors: string[];
-    distribution: string;
-    psychology: string;
-    replicable: string[];
-    notReplicable: string[];
-  } | null>(null);
+  const [analysis, setAnalysis] = useState<{ topFactors: string[]; replicable: string[]; notReplicable: string[] } | null>(null);
 
   const handleAnalyze = async () => {
     if (!content.trim()) return;
     setLoading(true);
-    
     setTimeout(() => {
       setAnalysis({
-        topFactors: [
-          "Strong contrarian hook challenged common belief",
-          "Specific numbers created credibility",
-          "Posted during peak engagement hours"
-        ],
-        distribution: "Initial engagement triggered algorithm push. High share rate (2.3%) indicates strong word-of-mouth. Cross-posted to LinkedIn where it got a second wave.",
-        psychology: "Primary trigger: Identity. Viewers saw themselves in the struggle described. High comment rate suggests debate/discussion value.",
-        replicable: [
-          "Contrarian angle on common advice",
-          "Specific numbers and timeframes",
-          "Question-based hook format"
-        ],
-        notReplicable: [
-          "Timing coincided with trending topic",
-          "Influencer quote tweet gave initial boost",
-          "First-mover advantage on this angle"
-        ]
+        topFactors: ["Strong contrarian hook", "Specific numbers", "Peak timing"],
+        replicable: ["Contrarian angle", "Specific numbers", "Question-based hook"],
+        notReplicable: ["Trending topic timing", "Influencer boost", "First-mover advantage"],
       });
       setLoading(false);
     }, 1500);
   };
 
   return (
-    <div className="space-y-6">
-      <div className="grid md:grid-cols-2 gap-6">
-        <div>
-          <label className="block text-xs text-[var(--text-tertiary)] uppercase tracking-wider font-medium mb-2">
-            content to analyze
-          </label>
-          <textarea
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            placeholder="paste the content that performed well — we'll break down why it worked..."
-            className="textarea h-80"
-          />
-        </div>
-
-        <div className="space-y-6">
-          <div>
-            <label className="text-xs text-[var(--text-tertiary)] uppercase tracking-wider font-medium">metrics (optional)</label>
-            <p className="text-sm text-[var(--text-tertiary)] mt-1 mb-3">add numbers for deeper analysis</p>
-            
-            <div className="grid grid-cols-2 gap-4">
-              {Object.entries(metrics).map(([key, value]) => (
-                <div key={key} className="space-y-1">
-                  <label className="text-xs text-[var(--text-tertiary)] uppercase">{key}</label>
-                  <input
-                    type="text"
-                    value={value}
-                    onChange={(e) => setMetrics({ ...metrics, [key]: e.target.value })}
-                    placeholder="0"
-                    className="input text-sm"
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
+    <div className="space-y-8">
+      <div>
+        <label className="block text-sm text-[var(--text-secondary)] mb-2">content to analyze</label>
+        <textarea value={content} onChange={(e) => setContent(e.target.value)} placeholder="paste the content that performed well..." className="textarea h-60" />
       </div>
 
-      <button
-        onClick={handleAnalyze}
-        disabled={!content.trim() || loading}
-        className="btn-primary w-full"
-      >
-        {loading ? "performing autopsy..." : "analyze content"}
+      <button onClick={handleAnalyze} disabled={!content.trim() || loading} className="btn-primary w-full">
+        {loading ? "analyzing..." : "analyze content"}
       </button>
 
       {analysis && (
         <div className="space-y-6">
           <div className="card p-6">
             <h4 className="font-medium text-[var(--text-primary)] mb-4">why it worked</h4>
-            <div className="space-y-3">
-              {analysis.topFactors.map((factor, i) => (
-                <div key={i} className="flex items-start gap-3">
-                  <span className="badge terracotta">{i + 1}</span>
-                  <p className="text-[var(--text-secondary)]">{factor}</p>
-                </div>
-              ))}
-            </div>
+            {analysis.topFactors.map((f, i) => (
+              <div key={i} className="flex items-center gap-3 mb-2">
+                <span className="badge terracotta">{i + 1}</span>
+                <span className="text-[var(--text-secondary)]">{f}</span>
+              </div>
+            ))}
           </div>
-
           <div className="grid md:grid-cols-2 gap-4">
-            <div className="card p-6 border-l-4 border-l-[var(--sage)]">
-              <h4 className="font-medium text-[var(--sage)] mb-3">✓ replicable</h4>
-              <ul className="space-y-2">
-                {analysis.replicable.map((item, i) => (
-                  <li key={i} className="text-sm text-[var(--text-secondary)]">• {item}</li>
-                ))}
-              </ul>
+            <div className="card p-6 border-l-4 border-l-[var(--forest)]">
+              <h4 className="font-medium text-[var(--forest)] mb-3">✓ replicable</h4>
+              {analysis.replicable.map((item, i) => <p key={i} className="text-sm text-[var(--text-secondary)]">• {item}</p>)}
             </div>
             <div className="card p-6 border-l-4 border-l-[var(--terracotta)]">
               <h4 className="font-medium text-[var(--terracotta)] mb-3">✗ not replicable</h4>
-              <ul className="space-y-2">
-                {analysis.notReplicable.map((item, i) => (
-                  <li key={i} className="text-sm text-[var(--text-secondary)]">• {item}</li>
-                ))}
-              </ul>
+              {analysis.notReplicable.map((item, i) => <p key={i} className="text-sm text-[var(--text-secondary)]">• {item}</p>)}
             </div>
           </div>
-        </div>
-      )}
-    </div>
-  );
-}
-
-function HooksTab() {
-  const [topic, setTopic] = useState("");
-  const [audience, setAudience] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [hooks, setHooks] = useState<Array<{ hook: string; type: string; why: string }> | null>(null);
-
-  const handleGenerate = async () => {
-    if (!topic.trim()) return;
-    setLoading(true);
-    
-    setTimeout(() => {
-      setHooks([
-        { hook: "Stop waking up at 5am if you want to be productive.", type: "contrarian", why: "Challenges widely-held belief, creates instant curiosity" },
-        { hook: "I wasted 3 years doing this wrong.", type: "confession", why: "Vulnerability + specific timeframe = credibility" },
-        { hook: "The reason you're tired isn't sleep.", type: "curiosity gap", why: "Opens a loop that demands resolution" },
-        { hook: "If you're a creator making under $10k/month, this is why.", type: "identity call", why: "Specific audience + implied solution" },
-        { hook: "Nobody's talking about this yet.", type: "FOMO", why: "Exclusivity + timeliness" },
-      ]);
-      setLoading(false);
-    }, 1500);
-  };
-
-  return (
-    <div className="space-y-6">
-      <div className="grid md:grid-cols-2 gap-6">
-        <div>
-          <label className="block text-xs text-[var(--text-tertiary)] uppercase tracking-wider font-medium mb-2">
-            topic
-          </label>
-          <textarea
-            value={topic}
-            onChange={(e) => setTopic(e.target.value)}
-            placeholder="what's your video about? the more specific, the better the hooks..."
-            className="textarea h-60"
-          />
-        </div>
-
-        <div className="space-y-6">
-          <div>
-            <label className="text-xs text-[var(--text-tertiary)] uppercase tracking-wider font-medium">audience (optional)</label>
-            <textarea
-              value={audience}
-              onChange={(e) => setAudience(e.target.value)}
-              placeholder="who specifically is this for? the more specific, the sharper the hooks..."
-              className="textarea h-32 mt-2"
-            />
-          </div>
-          
-          <div className="p-4 bg-[var(--bg-elevated)] rounded-lg">
-            <p className="text-xs text-[var(--text-tertiary)] mb-2">generates 5-10 hooks using proven formulas:</p>
-            <div className="flex flex-wrap gap-2">
-              {["contrarian", "confession", "curiosity gap", "identity call", "FOMO"].map(f => (
-                <span key={f} className="badge muted">{f}</span>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <button
-        onClick={handleGenerate}
-        disabled={!topic.trim() || loading}
-        className="btn-primary w-full"
-      >
-        {loading ? "generating hooks..." : "generate hooks"}
-      </button>
-
-      {hooks && (
-        <div className="space-y-4">
-          {hooks.map((item, i) => (
-            <div key={i} className="card p-5">
-              <div className="flex items-start justify-between gap-4 mb-3">
-                <p className="text-lg text-[var(--text-primary)] font-medium">&quot;{item.hook}&quot;</p>
-                <button className="text-sm text-[var(--accent)] hover:opacity-80 shrink-0">copy</button>
-              </div>
-              <div className="flex items-center gap-3">
-                <span className="badge sage">{item.type}</span>
-                <span className="text-sm text-[var(--text-tertiary)]">{item.why}</span>
-              </div>
-            </div>
-          ))}
         </div>
       )}
     </div>
@@ -761,34 +571,41 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-[var(--bg-primary)]">
       {/* Navbar */}
-      <nav className="navbar fixed top-0 left-0 right-0 z-50 backdrop-blur-sm bg-[var(--bg-primary)]/90">
-        <div className="max-w-5xl mx-auto flex items-center justify-between">
+      <nav className="border-b border-[var(--border-default)] bg-[var(--bg-primary)]">
+        <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
           <span className="logo">scriptkit</span>
         </div>
       </nav>
 
       {/* Hero */}
-      <main className="max-w-5xl mx-auto px-6 pt-28 pb-16">
-        {/* Hero Text */}
-        <div className="text-center mb-12">
-          <h1 className="text-5xl md:text-7xl text-[var(--text-primary)] mb-4">
-            scriptkit
-          </h1>
-          <p className="text-xl text-[var(--text-secondary)] max-w-2xl mx-auto">
-            the creator toolkit. write scripts, generate hooks, repurpose content, analyze what works.
-          </p>
-        </div>
+      <header className="max-w-5xl mx-auto px-6 pt-16 pb-8 text-center">
+        <h1 className="text-5xl md:text-7xl mb-4">
+          <span className="headline-script">Scripts That</span>
+          <br />
+          <span className="headline-serif">Actually Work</span>
+        </h1>
+        <p className="text-lg text-[var(--text-secondary)] max-w-xl mx-auto">
+          the creator toolkit. write scripts, generate hooks, repurpose content, analyze what works.
+        </p>
+      </header>
 
+      {/* Section divider with labels */}
+      <div className="max-w-5xl mx-auto px-6">
+        <div className="section-header">
+          <span>get started</span>
+          <span>& create</span>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <main className="max-w-5xl mx-auto px-6 py-12">
         {/* Tab Navigation */}
-        <div className="flex justify-center mb-0">
+        <div className="flex justify-center mb-8">
           <div className="tab-nav">
             {TABS.map((tab) => (
               <button
                 key={tab.id}
-                onClick={() => {
-                  setActiveTab(tab.id);
-                  setResult(null);
-                }}
+                onClick={() => { setActiveTab(tab.id); setResult(null); }}
                 className={`tab ${activeTab === tab.id ? 'active' : ''}`}
               >
                 {tab.label}
@@ -797,28 +614,27 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Tab Container */}
-        <div className="tab-container p-6 md:p-8 mb-8">
-          {/* Tab Description */}
-          <p className="text-center text-[var(--text-tertiary)] mb-8 text-sm">
-            {TABS.find(t => t.id === activeTab)?.description}
-          </p>
+        {/* Tab Description */}
+        <p className="text-center text-[var(--text-tertiary)] mb-10">
+          {TAB_DESCRIPTIONS[activeTab]}
+        </p>
 
-          {/* Tab Content */}
+        {/* Tab Content */}
+        <div className="card p-6 md:p-8">
           {activeTab === "script" && <ScriptTab onResult={setResult} />}
+          {activeTab === "hooks" && <HooksTab />}
           {activeTab === "repurpose" && <RepurposeTab />}
           {activeTab === "analyze" && <AnalyzeTab />}
-          {activeTab === "hooks" && <HooksTab />}
         </div>
 
-        {/* Script Results (only for script tab) */}
+        {/* Script Results */}
         {activeTab === "script" && result && (
           <div className="mt-12 space-y-8">
             <ReportCard data={result} />
 
-            <div className="card p-6 md:p-8">
+            <div className="card p-8">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="font-medium text-[var(--text-primary)]">your script</h3>
+                <h3 className="text-xl">your script</h3>
                 <span className="text-sm text-[var(--text-tertiary)]">
                   {result.estimated_duration} · {result.word_count} words
                 </span>
@@ -833,16 +649,14 @@ export default function Home() {
 
             {result.diagnosis.length > 0 && (
               <div className="space-y-4">
-                <h3 className="font-medium text-[var(--text-primary)]">
-                  diagnosis — {result.diagnosis.length} weakest lines
-                </h3>
+                <h3 className="text-xl">diagnosis</h3>
                 {result.diagnosis.map((item, i) => (
-                  <div key={i} className="card p-5 space-y-4">
+                  <div key={i} className="card p-5 space-y-3">
                     <span className="badge terracotta">{item.issue_type}</span>
                     <div className="border-l-2 border-[var(--warning)] pl-4">
                       <p className="text-sm text-[var(--text-secondary)] italic">&quot;{item.original_line}&quot;</p>
                     </div>
-                    <div className="border-l-2 border-[var(--sage)] pl-4">
+                    <div className="border-l-2 border-[var(--forest)] pl-4">
                       <p className="text-sm text-[var(--text-primary)]">&quot;{item.rewrite}&quot;</p>
                     </div>
                     <p className="text-xs text-[var(--text-tertiary)]">{item.explanation}</p>
@@ -850,40 +664,24 @@ export default function Home() {
                 ))}
               </div>
             )}
-
-            {result.anti_generic_flags.length > 0 && (
-              <div className="space-y-4">
-                <h3 className="font-medium text-[var(--text-primary)]">anti-generic filter</h3>
-                <div className="flex flex-wrap gap-2">
-                  {result.anti_generic_flags.map((flag, i) => (
-                    <span key={i} className="badge terracotta">
-                      &quot;{flag.phrase}&quot; → {flag.replacement}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
-            {result.anti_generic_flags.length === 0 && result && (
-              <p className="text-sm text-[var(--sage)] font-medium">✓ no generic patterns detected</p>
-            )}
           </div>
         )}
       </main>
 
-      {/* How It Works Section */}
-      <section className="border-t border-[var(--border-default)] py-20 bg-[var(--bg-elevated)]">
+      {/* How it works */}
+      <section className="border-t border-[var(--border-default)] py-16 bg-[var(--bg-elevated)]">
         <div className="max-w-5xl mx-auto px-6">
-          <h2 className="text-3xl text-[var(--text-primary)] mb-4">not another ai tool.</h2>
-          <div className="text-[var(--text-secondary)] space-y-2 mb-10 max-w-2xl">
-            <p>9 modules. each one has a psychological job.</p>
-            <p>then we grade it. 14 dimensions. the 3 weakest lines get rewritten.</p>
-            <p>then we kill anything that sounds like everyone else.</p>
-          </div>
-
+          <h2 className="text-3xl mb-4">
+            <span className="headline-script">Not Another</span>{" "}
+            <span className="headline-serif">AI Tool</span>
+          </h2>
+          <p className="text-[var(--text-secondary)] mb-8 max-w-xl">
+            9 modules. 14 scoring dimensions. the 3 weakest lines get rewritten. then we kill anything that sounds generic.
+          </p>
           <div className="flex flex-wrap items-center gap-2">
-            {MODULES.map((module, i) => (
-              <div key={module} className="flex items-center gap-2">
-                <span className="badge muted">{module}</span>
+            {MODULES.map((m, i) => (
+              <div key={m} className="flex items-center gap-2">
+                <span className="badge muted">{m}</span>
                 {i < MODULES.length - 1 && <span className="text-[var(--text-tertiary)]">→</span>}
               </div>
             ))}
@@ -891,11 +689,12 @@ export default function Home() {
         </div>
       </section>
 
-      {/* FAQ Section */}
-      <section className="border-t border-[var(--border-default)] py-20">
+      {/* FAQ */}
+      <section className="border-t border-[var(--border-default)] py-16">
         <div className="max-w-5xl mx-auto px-6">
-          <h2 className="text-3xl text-[var(--text-primary)] mb-10">faq</h2>
-
+          <h2 className="text-3xl mb-10">
+            <span className="headline-serif">FAQ</span>
+          </h2>
           <div className="grid md:grid-cols-2 gap-4">
             {FAQ_ITEMS.map((item) => (
               <div key={item.q} className="card p-5">
@@ -908,7 +707,7 @@ export default function Home() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-[var(--border-default)] py-10 bg-[var(--bg-elevated)]">
+      <footer className="border-t border-[var(--border-default)] py-8 bg-[var(--bg-elevated)]">
         <p className="text-center text-sm text-[var(--text-tertiary)]">
           scriptkit — the creator toolkit
         </p>
