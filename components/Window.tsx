@@ -20,100 +20,104 @@ export function Window({ title, onClose, children, color }: WindowProps) {
   }, [onClose]);
 
   return (
-    <div 
-      className="fixed inset-0 z-50 flex items-center justify-center px-8 py-8 animate-fade-in"
-      style={{
-        backgroundColor: 'rgba(0, 0, 0, 0.3)',
-        backdropFilter: 'blur(2px)'
-      }}
-      onClick={onClose}
-    >
+    <>
       <div 
-        className="window-container"
-        onClick={(e) => e.stopPropagation()}
+        className="fixed inset-0 z-50 flex items-center justify-center px-8 py-8"
         style={{
-          width: '90%',
-          maxWidth: '1200px',
-          maxHeight: '85vh',
-          backgroundColor: '#FFFFFF',
-          borderRadius: '8px',
-          border: '2px solid #2C2318',
-          boxShadow: '8px 8px 0px rgba(44, 35, 24, 0.2)',
-          overflow: 'hidden',
-          display: 'flex',
-          flexDirection: 'column'
+          backgroundColor: 'rgba(0, 0, 0, 0.3)',
+          animation: 'fadeIn 0.2s ease-out'
         }}
+        onClick={onClose}
       >
-        {/* Title Bar */}
         <div 
-          className="window-title-bar flex items-center justify-between px-4 py-3 border-b-2 select-none"
+          className="window-container"
+          onClick={(e) => e.stopPropagation()}
           style={{
-            backgroundColor: color,
-            borderColor: '#2C2318'
+            width: '80%',
+            maxWidth: '1400px',
+            height: '85vh',
+            backgroundColor: '#FAF7F2',
+            borderRadius: '8px',
+            border: '1px solid rgba(44, 35, 24, 0.1)',
+            boxShadow: '0 20px 60px rgba(44, 35, 24, 0.15), 0 8px 24px rgba(44, 35, 24, 0.08)',
+            overflow: 'hidden',
+            display: 'flex',
+            flexDirection: 'column',
+            animation: 'popupScale 0.25s cubic-bezier(0.16, 1, 0.3, 1)'
           }}
         >
-          <h2 
-            className="font-medium tracking-widest text-sm"
-            style={{ 
-              color: '#FFFFFF',
-              textTransform: 'uppercase',
-              letterSpacing: '0.1em'
+          {/* Title Bar */}
+          <div 
+            className="window-title-bar flex items-center justify-between px-6 select-none"
+            style={{
+              height: '48px',
+              background: `linear-gradient(180deg, ${color}15 0%, ${color}08 100%)`,
+              borderBottom: `1px solid ${color}30`,
+              borderTopLeftRadius: '8px',
+              borderTopRightRadius: '8px'
             }}
           >
-            {title}
-          </h2>
-          
-          {/* Window Controls */}
-          <div className="flex items-center gap-2">
-            {/* Minimize button (disabled for now) */}
-            <button
-              className="window-control"
-              disabled
-              style={{
-                width: '20px',
-                height: '20px',
-                backgroundColor: 'rgba(255, 255, 255, 0.3)',
-                border: '1px solid rgba(255, 255, 255, 0.5)',
-                borderRadius: '2px',
-                opacity: 0.5
+            <h2 
+              className="font-semibold tracking-wider text-xs"
+              style={{ 
+                color: 'var(--text-primary)',
+                textTransform: 'uppercase',
+                letterSpacing: '0.12em',
+                fontFamily: 'var(--font-body)'
               }}
             >
-              <span style={{ fontSize: '10px', color: '#FFF' }}>_</span>
-            </button>
+              {title}
+            </h2>
             
-            {/* Close button */}
+            {/* Close Button - "Cursor Tab" */}
             <button
               onClick={onClose}
-              className="window-control hover:bg-red-500 transition-colors"
+              className="transition-all duration-150 hover:scale-110"
               style={{
-                width: '20px',
-                height: '20px',
-                backgroundColor: 'rgba(255, 255, 255, 0.3)',
-                border: '1px solid rgba(255, 255, 255, 0.5)',
-                borderRadius: '2px',
+                width: '24px',
+                height: '24px',
+                backgroundColor: color,
+                borderRadius: '4px',
+                border: 'none',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                fontWeight: 'bold',
-                fontSize: '12px',
-                color: '#FFF'
+                fontWeight: 600,
+                fontSize: '14px',
+                color: '#FFFFFF',
+                cursor: 'url(/cursor-pointer.svg) 8 0, pointer'
               }}
+              aria-label="Close window"
             >
               ×
             </button>
           </div>
-        </div>
 
-        {/* Window Body */}
-        <div 
-          className="window-body flex-1 overflow-auto p-8"
-          style={{
-            backgroundColor: '#FAF7F2'
-          }}
-        >
-          {children}
+          {/* Window Body */}
+          <div 
+            className="window-body flex-1 overflow-auto p-8"
+            style={{
+              backgroundColor: '#FFFFFF'
+            }}
+          >
+            {children}
+          </div>
         </div>
       </div>
-    </div>
+
+      {/* Popup Animation Keyframes */}
+      <style jsx>{`
+        @keyframes popupScale {
+          from {
+            opacity: 0;
+            transform: scale(0.95);
+          }
+          to {
+            opacity: 1;
+            transform: scale(1);
+          }
+        }
+      `}</style>
+    </>
   );
 }

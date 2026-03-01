@@ -22,45 +22,49 @@ function FolderIcon({
   isHovered: boolean;
   isActive: boolean;
 }) {
-  const isFilled = isHovered || isActive;
+  const shouldHighlight = isHovered || isActive;
+  
+  // Lighten color for default state, full color for hover/active
+  const folderFill = color;
+  const folderOpacity = shouldHighlight ? 1 : 0.85;
   
   return (
-    <div className="folder-item flex flex-col items-center gap-3 transition-all duration-200">
-      {/* Folder Icon */}
+    <div 
+      className="folder-item flex flex-col items-center gap-3 transition-all duration-200"
+      style={{ transform: shouldHighlight ? 'scale(1.05)' : 'scale(1)' }}
+    >
+      {/* Folder Icon - Solid filled like Stitch mockup */}
       <svg 
-        width="80" 
-        height="64" 
-        viewBox="0 0 80 64" 
+        width="72" 
+        height="56" 
+        viewBox="0 0 72 56" 
         fill="none" 
         xmlns="http://www.w3.org/2000/svg"
         className="transition-all duration-200"
+        style={{ filter: shouldHighlight ? 'drop-shadow(0 4px 8px rgba(0,0,0,0.15))' : 'none' }}
       >
-        {/* Folder tab */}
-        <rect 
-          x="0" 
-          y="0" 
-          width="32" 
-          height="12" 
-          fill={isFilled ? color : "transparent"}
-          stroke={color}
-          strokeWidth="2"
+        {/* Folder tab - rounded top */}
+        <path 
+          d="M0 6C0 2.68629 2.68629 0 6 0H24C26.2091 0 28.2091 1.19523 29.2361 3.12311L32 8H66C69.3137 8 72 10.6863 72 14V50C72 53.3137 69.3137 56 66 56H6C2.68629 56 0 53.3137 0 50V6Z"
+          fill={folderFill}
+          opacity={folderOpacity}
         />
-        {/* Folder body */}
-        <rect 
-          x="0" 
-          y="12" 
-          width="80" 
-          height="52" 
-          fill={isFilled ? color : "transparent"}
-          stroke={color}
-          strokeWidth="2"
+        {/* Inner fold line for depth */}
+        <path 
+          d="M0 14H72"
+          stroke="rgba(0,0,0,0.1)"
+          strokeWidth="1"
         />
       </svg>
       
       {/* Label */}
       <span 
-        className="text-xs tracking-widest font-medium transition-colors duration-200"
-        style={{ color: isFilled ? color : "var(--text-secondary)" }}
+        className="tracking-widest font-medium transition-colors duration-200"
+        style={{ 
+          color: shouldHighlight ? color : "var(--text-secondary)",
+          fontSize: '11px',
+          letterSpacing: '0.15em'
+        }}
       >
         {label}
       </span>
@@ -111,32 +115,31 @@ export default function Home() {
 
         {/* Center Content */}
         <main className="flex-1 flex flex-col items-center justify-center px-12">
-          {/* Logo */}
+          {/* Logo - Elegant italic serif like Stitch mockup */}
           <h1 
-            className="mb-8"
+            className="mb-6"
             style={{
               fontFamily: 'Playfair Display, serif',
               fontStyle: 'italic',
-              fontWeight: 700,
-              fontSize: '96px',
-              lineHeight: '1',
-              color: 'var(--text-primary)',
+              fontWeight: 600,
+              fontSize: 'clamp(48px, 10vw, 88px)',
+              lineHeight: '1.1',
+              color: '#2C2318',
               letterSpacing: '-0.02em'
             }}
           >
             scriptkit
           </h1>
 
-          {/* Tagline - Make it MORE VISIBLE */}
+          {/* Tagline - Light letterspaced small caps like Stitch */}
           <p 
-            className="mb-16"
+            className="mb-12"
             style={{
-              fontFamily: 'Playfair Display, serif',
-              fontStyle: 'italic',
-              fontSize: '22px',
-              fontWeight: 600,
-              color: '#1A1512',
-              letterSpacing: '0.08em',
+              fontFamily: 'system-ui, -apple-system, sans-serif',
+              fontSize: '13px',
+              fontWeight: 400,
+              color: '#8A8075',
+              letterSpacing: '0.25em',
               textTransform: 'uppercase'
             }}
           >
