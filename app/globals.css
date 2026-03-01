@@ -71,3 +71,22 @@ h1, h2, h3, h4, h5, h6 {
 .animate-fade-in {
   animation: fadeIn 0.2s ease-out;
 }
+
+/* Window responsive styles */
+@media (min-width: 768px) {
+  .window-container {
+    border-radius: 8px !important;
+  }
+  
+  .window-title-bar {
+    border-top-left-radius: 8px !important;
+    border-top-right-radius: 8px !important;
+  }
+}
+
+/* Ensure touch targets are large enough on mobile */
+@media (max-width: 767px) {
+  button {
+    min-height: 44px;
+  }
+}

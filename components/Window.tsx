@@ -22,7 +22,7 @@ export function Window({ title, onClose, children, color }: WindowProps) {
   return (
     <>
       <div 
-        className="fixed inset-0 z-50 flex items-center justify-center px-8 py-8"
+        className="fixed inset-0 z-50 flex items-center justify-center md:px-8 md:py-8"
         style={{
           backgroundColor: 'rgba(0, 0, 0, 0.3)',
           animation: 'fadeIn 0.2s ease-out'
@@ -30,14 +30,11 @@ export function Window({ title, onClose, children, color }: WindowProps) {
         onClick={onClose}
       >
         <div 
-          className="window-container"
+          className="window-container w-full h-full md:w-4/5 md:h-[85vh] md:max-w-[1400px]"
           onClick={(e) => e.stopPropagation()}
           style={{
-            width: '80%',
-            maxWidth: '1400px',
-            height: '85vh',
             backgroundColor: '#FAF7F2',
-            borderRadius: '8px',
+            borderRadius: '0',
             border: '1px solid rgba(44, 35, 24, 0.1)',
             boxShadow: '0 20px 60px rgba(44, 35, 24, 0.15), 0 8px 24px rgba(44, 35, 24, 0.08)',
             overflow: 'hidden',
@@ -48,13 +45,13 @@ export function Window({ title, onClose, children, color }: WindowProps) {
         >
           {/* Title Bar */}
           <div 
-            className="window-title-bar flex items-center justify-between px-6 select-none"
+            className="window-title-bar flex items-center justify-between px-4 md:px-6 select-none shrink-0"
             style={{
               height: '48px',
               background: `linear-gradient(180deg, ${color}15 0%, ${color}08 100%)`,
               borderBottom: `1px solid ${color}30`,
-              borderTopLeftRadius: '8px',
-              borderTopRightRadius: '8px'
+              borderTopLeftRadius: '0',
+              borderTopRightRadius: '0'
             }}
           >
             <h2 
@@ -69,21 +66,16 @@ export function Window({ title, onClose, children, color }: WindowProps) {
               {title}
             </h2>
             
-            {/* Close Button - "Cursor Tab" */}
+            {/* Close Button - "Cursor Tab" - Larger touch target on mobile */}
             <button
               onClick={onClose}
-              className="transition-all duration-150 hover:scale-110"
+              className="transition-all duration-150 hover:scale-110 min-w-[44px] min-h-[44px] flex items-center justify-center"
               style={{
-                width: '24px',
-                height: '24px',
                 backgroundColor: color,
                 borderRadius: '4px',
                 border: 'none',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
                 fontWeight: 600,
-                fontSize: '14px',
+                fontSize: '18px',
                 color: '#FFFFFF',
                 cursor: 'url(/cursor-pointer.svg) 8 0, pointer'
               }}
@@ -95,7 +87,7 @@ export function Window({ title, onClose, children, color }: WindowProps) {
 
           {/* Window Body */}
           <div 
-            className="window-body flex-1 overflow-auto p-8"
+            className="window-body flex-1 overflow-auto p-4 md:p-8"
             style={{
               backgroundColor: '#FFFFFF'
             }}

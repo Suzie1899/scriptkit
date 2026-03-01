@@ -17,7 +17,7 @@ function ToggleCard({ label, isActive, onClick, color }: ToggleCardProps) {
   return (
     <button
       onClick={onClick}
-      className="px-4 py-3 text-sm font-medium tracking-wider transition-all duration-200 hover:scale-[1.02]"
+      className="px-3 md:px-4 py-3 text-sm font-medium tracking-wider transition-all duration-200 hover:scale-[1.02] min-h-[44px] flex items-center justify-center"
       style={{
         backgroundColor: isActive ? color : "white",
         color: isActive ? "white" : "var(--text-primary)",
@@ -26,8 +26,11 @@ function ToggleCard({ label, isActive, onClick, color }: ToggleCardProps) {
         textTransform: "uppercase",
         letterSpacing: "0.08em",
         fontFamily: "var(--font-body)",
-        fontSize: "11px",
-        fontWeight: 600
+        fontSize: "clamp(9px, 2vw, 11px)",
+        fontWeight: 600,
+        whiteSpace: "nowrap",
+        overflow: "hidden",
+        textOverflow: "ellipsis"
       }}
     >
       {label}
@@ -47,11 +50,11 @@ export default function ScriptsTool() {
   return (
     <div className="max-w-6xl mx-auto">
       {/* Header */}
-      <div className="mb-12 text-center">
+      <div className="mb-8 md:mb-12 text-center">
         <h1
           style={{
             fontFamily: "var(--font-body)",
-            fontSize: "13px",
+            fontSize: "clamp(11px, 2.5vw, 13px)",
             fontWeight: 600,
             letterSpacing: "0.15em",
             textTransform: "uppercase",
@@ -65,27 +68,28 @@ export default function ScriptsTool() {
           style={{
             fontFamily: "var(--font-display)",
             fontStyle: "italic",
-            fontSize: "16px",
+            fontSize: "clamp(14px, 3vw, 16px)",
             color: "var(--text-secondary)",
-            lineHeight: "1.6"
+            lineHeight: "1.6",
+            padding: "0 1rem"
           }}
         >
           "Every great video starts with a script. Let's make yours unforgettable."
         </p>
       </div>
 
-      {/* Two Column Layout */}
-      <div className="grid grid-cols-2 gap-12">
+      {/* Mobile: Single column, Desktop: Two columns */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
         {/* LEFT COLUMN - Options */}
-        <div className="space-y-10">
+        <div className="space-y-6 md:space-y-10">
           {/* 01 / FORMAT */}
           <div>
             <h3
-              className="mb-4"
+              className="mb-3 md:mb-4"
               style={{
                 fontFamily: "var(--font-display)",
                 fontStyle: "italic",
-                fontSize: "18px",
+                fontSize: "clamp(16px, 3.5vw, 18px)",
                 color: "var(--text-primary)",
                 marginBottom: "16px"
               }}
@@ -104,7 +108,7 @@ export default function ScriptsTool() {
               </span>
               Format
             </h3>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-2 md:gap-3">
               {FORMATS.map((format) => (
                 <ToggleCard
                   key={format}
@@ -120,11 +124,11 @@ export default function ScriptsTool() {
           {/* 02 / PLATFORM */}
           <div>
             <h3
-              className="mb-4"
+              className="mb-3 md:mb-4"
               style={{
                 fontFamily: "var(--font-display)",
                 fontStyle: "italic",
-                fontSize: "18px",
+                fontSize: "clamp(16px, 3.5vw, 18px)",
                 color: "var(--text-primary)",
                 marginBottom: "16px"
               }}
@@ -143,7 +147,7 @@ export default function ScriptsTool() {
               </span>
               Platform
             </h3>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-2 md:gap-3">
               {PLATFORMS.map((platform) => (
                 <ToggleCard
                   key={platform}
@@ -159,11 +163,11 @@ export default function ScriptsTool() {
           {/* 03 / TONE */}
           <div>
             <h3
-              className="mb-4"
+              className="mb-3 md:mb-4"
               style={{
                 fontFamily: "var(--font-display)",
                 fontStyle: "italic",
-                fontSize: "18px",
+                fontSize: "clamp(16px, 3.5vw, 18px)",
                 color: "var(--text-primary)",
                 marginBottom: "16px"
               }}
@@ -182,7 +186,7 @@ export default function ScriptsTool() {
               </span>
               Tone
             </h3>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-2 md:gap-3">
               {TONES.map((tone) => (
                 <ToggleCard
                   key={tone}
@@ -200,11 +204,11 @@ export default function ScriptsTool() {
         <div className="flex flex-col">
           {/* Concept Header */}
           <h3
-            className="mb-4"
+            className="mb-3 md:mb-4"
             style={{
               fontFamily: "var(--font-display)",
               fontStyle: "italic",
-              fontSize: "20px",
+              fontSize: "clamp(18px, 4vw, 20px)",
               color: "var(--text-primary)"
             }}
           >
@@ -216,7 +220,7 @@ export default function ScriptsTool() {
             value={concept}
             onChange={(e) => setConcept(e.target.value)}
             placeholder="What's your video about?"
-            className="flex-1 p-6 resize-none focus:outline-none focus:ring-2 transition-all"
+            className="flex-1 p-4 md:p-6 resize-none focus:outline-none focus:ring-2 transition-all"
             style={{
               backgroundColor: "white",
               border: "1px solid var(--text-primary)",
@@ -225,7 +229,7 @@ export default function ScriptsTool() {
               fontSize: "15px",
               lineHeight: "1.7",
               color: "var(--text-primary)",
-              minHeight: "280px"
+              minHeight: "200px"
             }}
           />
 
@@ -244,7 +248,7 @@ export default function ScriptsTool() {
 
           {/* Generate Button */}
           <button
-            className="mt-6 py-4 px-8 transition-all duration-200 hover:scale-[1.02] hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+            className="mt-4 md:mt-6 py-4 px-8 transition-all duration-200 hover:scale-[1.02] hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed min-h-[48px]"
             style={{
               backgroundColor: TOOL_COLOR,
               color: "white",
@@ -265,7 +269,7 @@ export default function ScriptsTool() {
 
       {/* Footer */}
       <div
-        className="mt-16 pt-8 text-center border-t"
+        className="mt-12 md:mt-16 pt-6 md:pt-8 text-center border-t"
         style={{
           borderColor: "rgba(44, 35, 24, 0.1)"
         }}

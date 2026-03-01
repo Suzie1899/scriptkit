@@ -30,17 +30,15 @@ function FolderIcon({
   
   return (
     <div 
-      className="folder-item flex flex-col items-center gap-3 transition-all duration-200"
+      className="folder-item flex flex-col items-center gap-2 md:gap-3 transition-all duration-200"
       style={{ transform: shouldHighlight ? 'scale(1.05)' : 'scale(1)' }}
     >
-      {/* Folder Icon - Solid filled like Stitch mockup */}
+      {/* Folder Icon - Solid filled like Stitch mockup, smaller on mobile */}
       <svg 
-        width="72" 
-        height="56" 
+        className="w-14 h-11 md:w-[72px] md:h-14 transition-all duration-200"
         viewBox="0 0 72 56" 
         fill="none" 
         xmlns="http://www.w3.org/2000/svg"
-        className="transition-all duration-200"
         style={{ filter: shouldHighlight ? 'drop-shadow(0 4px 8px rgba(0,0,0,0.15))' : 'none' }}
       >
         {/* Folder tab - rounded top */}
@@ -59,10 +57,10 @@ function FolderIcon({
       
       {/* Label */}
       <span 
-        className="tracking-widest font-medium transition-colors duration-200"
+        className="tracking-widest font-medium transition-colors duration-200 text-center"
         style={{ 
           color: shouldHighlight ? color : "var(--text-secondary)",
-          fontSize: '11px',
+          fontSize: 'clamp(9px, 2vw, 11px)',
           letterSpacing: '0.15em'
         }}
       >
@@ -89,40 +87,42 @@ export default function Home() {
   return (
     <div className="min-h-screen flex flex-col">
       {/* Main Content Area */}
-      <div className="flex-1 flex">
-        {/* Left Sidebar - Folders */}
-        <aside className="w-48 flex flex-col items-center justify-center gap-12 py-12 px-6">
-          {FOLDERS.map((folder) => (
-            <button
-              key={folder.id}
-              onMouseEnter={() => setHoveredFolder(folder.id)}
-              onMouseLeave={() => setHoveredFolder(null)}
-              onClick={() => handleFolderClick(folder.id)}
-              className="focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-4"
-              style={{ 
-                outlineColor: folder.color
-              }}
-            >
-              <FolderIcon 
-                color={folder.color} 
-                label={folder.label}
-                isHovered={hoveredFolder === folder.id}
-                isActive={openTool === folder.id}
-              />
-            </button>
-          ))}
+      <div className="flex-1 flex flex-col md:flex-row">
+        {/* Mobile: Folders at top in 2x2 grid, Desktop: Left Sidebar */}
+        <aside className="w-full md:w-48 flex flex-col items-center justify-center py-8 px-6 md:py-12">
+          <div className="grid grid-cols-2 gap-6 md:flex md:flex-col md:gap-12 w-full max-w-sm md:max-w-none">
+            {FOLDERS.map((folder) => (
+              <button
+                key={folder.id}
+                onMouseEnter={() => setHoveredFolder(folder.id)}
+                onMouseLeave={() => setHoveredFolder(null)}
+                onClick={() => handleFolderClick(folder.id)}
+                className="focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-4 flex justify-center"
+                style={{ 
+                  outlineColor: folder.color
+                }}
+              >
+                <FolderIcon 
+                  color={folder.color} 
+                  label={folder.label}
+                  isHovered={hoveredFolder === folder.id}
+                  isActive={openTool === folder.id}
+                />
+              </button>
+            ))}
+          </div>
         </aside>
 
         {/* Center Content */}
-        <main className="flex-1 flex flex-col items-center justify-center px-12">
+        <main className="flex-1 flex flex-col items-center justify-center px-6 md:px-12 pb-12 md:pb-0">
           {/* Logo - Elegant italic serif like Stitch mockup */}
           <h1 
-            className="mb-6"
+            className="mb-4 md:mb-6 text-center"
             style={{
               fontFamily: 'Playfair Display, serif',
               fontStyle: 'italic',
               fontWeight: 600,
-              fontSize: 'clamp(48px, 10vw, 88px)',
+              fontSize: 'clamp(36px, 10vw, 88px)',
               lineHeight: '1.1',
               color: '#2C2318',
               letterSpacing: '-0.02em'
@@ -133,10 +133,10 @@ export default function Home() {
 
           {/* Tagline - Light letterspaced small caps like Stitch */}
           <p 
-            className="mb-12"
+            className="mb-8 md:mb-12 text-center px-4"
             style={{
               fontFamily: 'system-ui, -apple-system, sans-serif',
-              fontSize: '13px',
+              fontSize: 'clamp(10px, 2.5vw, 13px)',
               fontWeight: 400,
               color: '#8A8075',
               letterSpacing: '0.25em',
@@ -148,11 +148,11 @@ export default function Home() {
 
           {/* Bottom instruction */}
           <p 
-            className="mt-auto mb-12"
+            className="mt-auto mb-8 md:mb-12 text-center"
             style={{
               fontFamily: 'Playfair Display, serif',
               fontStyle: 'italic',
-              fontSize: '16px',
+              fontSize: 'clamp(14px, 3vw, 16px)',
               color: 'var(--text-tertiary)'
             }}
           >
@@ -162,15 +162,15 @@ export default function Home() {
       </div>
 
       {/* Footer */}
-      <footer className="py-6 px-12 flex items-center justify-between border-t border-gray-200">
+      <footer className="py-4 md:py-6 px-4 md:px-12 flex flex-col md:flex-row items-center justify-between gap-2 md:gap-0 border-t border-gray-200">
         <span 
-          className="text-xs tracking-widest"
+          className="text-xs tracking-widest text-center"
           style={{ color: 'var(--text-tertiary)' }}
         >
           © 2024 SCRIPTKIT COLLECTIVE
         </span>
         <span 
-          className="text-xs tracking-widest"
+          className="text-xs tracking-widest text-center hidden md:block"
           style={{ color: 'var(--text-tertiary)' }}
         >
           SYSTEM READY / V1.0.4
