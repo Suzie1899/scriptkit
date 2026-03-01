@@ -1,15 +1,29 @@
 "use client";
 
 import { useState } from "react";
+import { Window } from "@/components/Window";
+import ScriptsTool from "@/components/ScriptsTool";
 
 const FOLDERS = [
-  { id: "scripts", label: "SCRIPTS", color: "#5A6B7A" },
-  { id: "hooks", label: "HOOKS", color: "#B87D4B" },
-  { id: "repurpose", label: "REPURPOSE", color: "#2D5A4A" },
-  { id: "analyze", label: "ANALYZE", color: "#A67B73" },
+  { id: "scripts", label: "SCRIPTS", color: "#5A6B7A", windowTitle: "SCRIPT STUDIO" },
+  { id: "hooks", label: "HOOKS", color: "#B87D4B", windowTitle: "HOOK GENERATOR" },
+  { id: "repurpose", label: "REPURPOSE", color: "#2D5A4A", windowTitle: "CONTENT REPURPOSER" },
+  { id: "analyze", label: "ANALYZE", color: "#A67B73", windowTitle: "PERFORMANCE ANALYZER" },
 ];
 
-function FolderIcon({ color, label, isHovered }: { color: string; label: string; isHovered: boolean }) {
+function FolderIcon({ 
+  color, 
+  label, 
+  isHovered, 
+  isActive 
+}: { 
+  color: string; 
+  label: string; 
+  isHovered: boolean;
+  isActive: boolean;
+}) {
+  const isFilled = isHovered || isActive;
+  
   return (
     <div className="folder-item flex flex-col items-center gap-3 transition-all duration-200">
       {/* Folder Icon */}
@@ -27,7 +41,7 @@ function FolderIcon({ color, label, isHovered }: { color: string; label: string;
           y="0" 
           width="32" 
           height="12" 
-          fill={isHovered ? color : "transparent"}
+          fill={isFilled ? color : "transparent"}
           stroke={color}
           strokeWidth="2"
         />
@@ -37,7 +51,7 @@ function FolderIcon({ color, label, isHovered }: { color: string; label: string;
           y="12" 
           width="80" 
           height="52" 
-          fill={isHovered ? color : "transparent"}
+          fill={isFilled ? color : "transparent"}
           stroke={color}
           strokeWidth="2"
         />
@@ -46,7 +60,7 @@ function FolderIcon({ color, label, isHovered }: { color: string; label: string;
       {/* Label */}
       <span 
         className="text-xs tracking-widest font-medium transition-colors duration-200"
-        style={{ color: isHovered ? color : "var(--text-secondary)" }}
+        style={{ color: isFilled ? color : "var(--text-secondary)" }}
       >
         {label}
       </span>
@@ -56,6 +70,17 @@ function FolderIcon({ color, label, isHovered }: { color: string; label: string;
 
 export default function Home() {
   const [hoveredFolder, setHoveredFolder] = useState<string | null>(null);
+  const [openTool, setOpenTool] = useState<string | null>(null);
+
+  const handleFolderClick = (folderId: string) => {
+    setOpenTool(folderId);
+  };
+
+  const handleCloseWindow = () => {
+    setOpenTool(null);
+  };
+
+  const activeFolder = FOLDERS.find(f => f.id === openTool);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -68,6 +93,7 @@ export default function Home() {
               key={folder.id}
               onMouseEnter={() => setHoveredFolder(folder.id)}
               onMouseLeave={() => setHoveredFolder(null)}
+              onClick={() => handleFolderClick(folder.id)}
               className="focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-4"
               style={{ 
                 outlineColor: folder.color
@@ -77,6 +103,7 @@ export default function Home() {
                 color={folder.color} 
                 label={folder.label}
                 isHovered={hoveredFolder === folder.id}
+                isActive={openTool === folder.id}
               />
             </button>
           ))}
@@ -146,6 +173,32 @@ export default function Home() {
           SYSTEM READY / V1.0.4
         </span>
       </footer>
+
+      {/* Window Popup */}
+      {activeFolder && (
+        <Window 
+          title={activeFolder.windowTitle}
+          color={activeFolder.color}
+          onClose={handleCloseWindow}
+        >
+          {activeFolder.id === "scripts" && <ScriptsTool />}
+          {activeFolder.id === "hooks" && (
+            <div style={{ padding: '40px', textAlign: 'center', color: '#8A8075' }}>
+              <p>Hook Generator coming soon...</p>
+            </div>
+          )}
+          {activeFolder.id === "repurpose" && (
+            <div style={{ padding: '40px', textAlign: 'center', color: '#8A8075' }}>
+              <p>Content Repurposer coming soon...</p>
+            </div>
+          )}
+          {activeFolder.id === "analyze" && (
+            <div style={{ padding: '40px', textAlign: 'center', color: '#8A8075' }}>
+              <p>Performance Analyzer coming soon...</p>
+            </div>
+          )}
+        </Window>
+      )}
     </div>
   );
 }

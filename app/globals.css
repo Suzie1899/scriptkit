@@ -57,3 +57,17 @@ html {
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-display);
 }
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.2s ease-out;
+}
