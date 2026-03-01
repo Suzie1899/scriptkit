@@ -1,26 +1,67 @@
 @import "tailwindcss";
 
+/* Pixel Font - ThatThatNewPixelFamily */
+@font-face {
+  font-family: 'PixelFont';
+  src: url('/fonts/thatthatnewpixelfamilytest-square.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'PixelFont';
+  src: url('/fonts/thatthatnewpixelfamilytest-italicsquare.otf') format('opentype');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'PixelFontRound';
+  src: url('/fonts/thatthatnewpixelfamilytest-round.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
-  --bg-primary: #fafaf9;
-  --bg-surface: #ffffff;
-  --bg-elevated: #f5f5f4;
-  --border-default: #e7e5e4;
-  --border-hover: #d6d3d1;
+  /* Warm cream background - retro PC vibes */
+  --bg-primary: #FAF8F5;
+  --bg-surface: #FFFEFB;
+  --bg-elevated: #F5F2ED;
+  --border-default: #E8E4DD;
+  --border-hover: #D9D4CB;
   
-  --text-primary: #1c1917;
-  --text-secondary: #57534e;
-  --text-tertiary: #a8a29e;
+  /* Text - warm grays */
+  --text-primary: #2D2A26;
+  --text-secondary: #5C5751;
+  --text-tertiary: #9C9689;
   
-  --accent: #f97066;
-  --accent-hover: #f87171;
-  --accent-muted: rgba(249, 112, 102, 0.1);
+  /* Folder accent palette */
+  --folder-yellow: #F5D547;
+  --folder-blue: #7FBFDF;
+  --folder-green: #B5C99A;
+  --folder-pink: #F2B5B5;
+  --folder-purple: #C9B8E8;
   
-  --score-color: #a78bfa;
-  --score-muted: rgba(167, 139, 250, 0.1);
+  /* Primary accent - warm coral/red */
+  --accent: #E85A50;
+  --accent-hover: #D94A40;
+  --accent-muted: rgba(232, 90, 80, 0.12);
   
-  --success: #34d399;
-  --warning: #fbbf24;
-  --danger: #f87171;
+  /* Score - purple from folder palette */
+  --score-color: #9B7ED9;
+  --score-muted: rgba(155, 126, 217, 0.12);
+  
+  /* Status colors */
+  --success: #7AB87A;
+  --warning: #E5B84C;
+  --danger: #E07070;
+  
+  /* Pixel font */
+  --font-pixel: 'PixelFont', 'Press Start 2P', monospace;
+  --font-pixel-round: 'PixelFontRound', 'Press Start 2P', monospace;
 }
 
 * {
@@ -33,8 +74,19 @@ body {
   font-family: var(--font-body), system-ui, sans-serif;
 }
 
-/* All text lowercase - branding */
-h1, h2, h3, h4, h5, h6, button, label {
+/* Pixel font for headings - retro vibes */
+h1, h2 {
+  font-family: var(--font-pixel) !important;
+  text-transform: lowercase;
+  letter-spacing: 0.02em;
+}
+
+h3, h4, h5, h6 {
+  text-transform: lowercase;
+}
+
+/* Buttons get pixel treatment */
+button, label {
   text-transform: lowercase;
 }
 
@@ -43,15 +95,36 @@ html {
   scroll-behavior: smooth;
 }
 
-/* Selection */
+/* Selection - folder yellow */
 ::selection {
-  background: var(--accent-muted);
+  background: var(--folder-yellow);
   color: var(--text-primary);
 }
 
-/* Custom scrollbar */
+/* Subtle grain texture overlay */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  z-index: 1000;
+}
+
+/* Pixel-style focus states */
+:focus-visible {
+  outline: 2px dashed var(--accent);
+  outline-offset: 2px;
+}
+
+/* Scrollbar styling - retro */
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 12px;
+  height: 12px;
 }
 
 ::-webkit-scrollbar-track {
@@ -59,10 +132,10 @@ html {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--border-default);
-  border-radius: 3px;
+  background: var(--border-hover);
+  border: 2px solid var(--bg-elevated);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--border-hover);
+  background: var(--text-tertiary);
 }
