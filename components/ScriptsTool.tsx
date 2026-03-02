@@ -3,12 +3,12 @@
 import { useState } from "react";
 
 const FORMATS = [
-  { id: "talking-head", label: "TALKING HEAD", desc: "Direct to camera" },
-  { id: "skit", label: "SKIT", desc: "Narrative scene" },
-  { id: "storytelling", label: "STORYTELLING", desc: "Personal narrative" },
-  { id: "montage", label: "MONTAGE", desc: "Visual sequence" },
-  { id: "voxpop", label: "VOXPOP", desc: "Street interviews" },
-  { id: "explainer", label: "EXPLAINER", desc: "Educational content" },
+  { id: "talking head", label: "TALKING HEAD" },
+  { id: "skit", label: "SKIT" },
+  { id: "storytelling", label: "STORYTELLING" },
+  { id: "montage", label: "MONTAGE" },
+  { id: "voxpop", label: "VOXPOP" },
+  { id: "explainer", label: "EXPLAINER" },
 ];
 
 const PLATFORMS = [
@@ -36,83 +36,137 @@ const TRIGGERS = [
 
 const TOOL_COLOR = "#5A6B7A";
 
+interface ScriptResult {
+  script: string;
+  hook_strength?: number;
+  estimated_duration?: number;
+  structure?: {
+    hook?: string;
+    setup?: string;
+    payoff?: string;
+  };
+  grade?: string;
+  score?: number;
+}
+
 export default function ScriptsTool() {
-  const [selectedFormat, setSelectedFormat] = useState("talking-head");
+  const [selectedFormat, setSelectedFormat] = useState("talking head");
   const [selectedPlatform, setSelectedPlatform] = useState("reels");
   const [selectedTone, setSelectedTone] = useState("casual");
   const [selectedTrigger, setSelectedTrigger] = useState<string | null>(null);
   const [concept, setConcept] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
+  const [result, setResult] = useState<ScriptResult | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const wordCount = concept.trim().split(/\s+/).filter(Boolean).length;
+
+  const handleGenerate = async () => {
+    if (!concept.trim()) return;
+    
+    setIsGenerating(true);
+    setError(null);
+    setResult(null);
+
+    try {
+      const response = await fetch('/api/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          topic: concept,
+          format: selectedFormat,
+          platform: selectedPlatform,
+          tone: selectedTone,
+          emotionalTrigger: selectedTrigger || undefined,
+        }),
+      });
+
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to generate script');
+      }
+
+      setResult(data);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Something went wrong');
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text);
+  };
 
   return (
     <div className="h-full flex flex-col">
       {/* Header Bar */}
       <div 
-        className="flex items-center justify-between px-6 py-4 border-b"
+        className="flex items-center justify-between px-4 lg:px-6 py-3 lg:py-4 border-b"
         style={{ borderColor: 'rgba(44, 35, 24, 0.1)' }}
       >
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3 lg:gap-4">
           <span 
-            className="px-3 py-1.5 text-white text-xs font-semibold tracking-widest"
+            className="px-2 lg:px-3 py-1 lg:py-1.5 text-white text-xs font-semibold tracking-widest"
             style={{ backgroundColor: TOOL_COLOR, borderRadius: '2px' }}
           >
             SCRIPT.V1
           </span>
-          <span className="text-xs tracking-widest text-gray-400">
-            NARRATIVE ENGINE ACTIVE
+          <span className="text-xs tracking-widest text-gray-400 hidden sm:inline">
+            NARRATIVE ENGINE
           </span>
         </div>
         <span className="text-xs tracking-wider text-gray-400">
-          SYSTEM: OPERATIONAL
+          {isGenerating ? 'GENERATING...' : 'READY'}
         </span>
       </div>
 
       {/* Main Content */}
       <div className="flex-1 overflow-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-0 h-full">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-0 min-h-full">
           
           {/* LEFT PANEL - Configuration */}
           <div 
-            className="lg:col-span-4 p-6 lg:p-8 border-r overflow-auto"
+            className="lg:col-span-4 p-4 lg:p-6 border-b lg:border-b-0 lg:border-r overflow-auto"
             style={{ borderColor: 'rgba(44, 35, 24, 0.1)' }}
           >
             {/* 01 / FORMAT */}
-            <div className="mb-8">
-              <h3 className="flex items-baseline gap-2 mb-4">
+            <div className="mb-6">
+              <h3 className="flex items-baseline gap-2 mb-3">
                 <span className="text-xs font-semibold tracking-widest" style={{ color: TOOL_COLOR }}>01 /</span>
-                <span style={{ fontFamily: 'Playfair Display, serif', fontStyle: 'italic', fontSize: '18px' }}>
+                <span style={{ fontFamily: 'Playfair Display, serif', fontStyle: 'italic', fontSize: '16px' }}>
                   Format
                 </span>
               </h3>
-              <div className="space-y-2">
+              <div className="grid grid-cols-2 gap-2">
                 {FORMATS.map((format) => (
                   <button
                     key={format.id}
                     onClick={() => setSelectedFormat(format.id)}
-                    className="w-full text-left px-4 py-3 transition-all duration-200 flex items-center justify-between group"
+                    className="text-left px-3 py-2 transition-all duration-200 flex items-center justify-between"
                     style={{
                       backgroundColor: selectedFormat === format.id ? TOOL_COLOR : 'white',
                       color: selectedFormat === format.id ? 'white' : '#2C2318',
                       border: `1px solid ${selectedFormat === format.id ? TOOL_COLOR : '#E5E0D8'}`,
                       borderRadius: '4px',
+                      fontSize: '10px',
+                      fontWeight: 600,
+                      letterSpacing: '0.05em',
                     }}
                   >
-                    <span className="text-xs font-semibold tracking-wider">{format.label}</span>
-                    {selectedFormat === format.id && (
-                      <span className="text-white">✓</span>
-                    )}
+                    {format.label}
+                    {selectedFormat === format.id && <span>✓</span>}
                   </button>
                 ))}
               </div>
             </div>
 
             {/* 02 / PLATFORM */}
-            <div className="mb-8">
-              <h3 className="flex items-baseline gap-2 mb-4">
+            <div className="mb-6">
+              <h3 className="flex items-baseline gap-2 mb-3">
                 <span className="text-xs font-semibold tracking-widest" style={{ color: TOOL_COLOR }}>02 /</span>
-                <span style={{ fontFamily: 'Playfair Display, serif', fontStyle: 'italic', fontSize: '18px' }}>
+                <span style={{ fontFamily: 'Playfair Display, serif', fontStyle: 'italic', fontSize: '16px' }}>
                   Platform
                 </span>
               </h3>
@@ -121,26 +175,28 @@ export default function ScriptsTool() {
                   <button
                     key={platform.id}
                     onClick={() => setSelectedPlatform(platform.id)}
-                    className="px-3 py-3 transition-all duration-200 flex items-center gap-2"
+                    className="px-3 py-2 transition-all duration-200 flex items-center gap-2"
                     style={{
                       backgroundColor: selectedPlatform === platform.id ? TOOL_COLOR : 'white',
                       color: selectedPlatform === platform.id ? 'white' : '#2C2318',
                       border: `1px solid ${selectedPlatform === platform.id ? TOOL_COLOR : '#E5E0D8'}`,
                       borderRadius: '4px',
+                      fontSize: '10px',
+                      fontWeight: 600,
                     }}
                   >
-                    <span className="text-sm">{platform.icon}</span>
-                    <span className="text-xs font-semibold tracking-wider">{platform.label}</span>
+                    <span>{platform.icon}</span>
+                    <span>{platform.label}</span>
                   </button>
                 ))}
               </div>
             </div>
 
             {/* 03 / TONE */}
-            <div className="mb-8">
-              <h3 className="flex items-baseline gap-2 mb-4">
+            <div className="mb-6">
+              <h3 className="flex items-baseline gap-2 mb-3">
                 <span className="text-xs font-semibold tracking-widest" style={{ color: TOOL_COLOR }}>03 /</span>
-                <span style={{ fontFamily: 'Playfair Display, serif', fontStyle: 'italic', fontSize: '18px' }}>
+                <span style={{ fontFamily: 'Playfair Display, serif', fontStyle: 'italic', fontSize: '16px' }}>
                   Tone
                 </span>
               </h3>
@@ -149,15 +205,14 @@ export default function ScriptsTool() {
                   <button
                     key={tone.id}
                     onClick={() => setSelectedTone(tone.id)}
-                    className="px-4 py-2 transition-all duration-200"
+                    className="px-3 py-2 transition-all duration-200"
                     style={{
                       backgroundColor: selectedTone === tone.id ? TOOL_COLOR : 'white',
                       color: selectedTone === tone.id ? 'white' : '#2C2318',
                       border: `1px solid ${selectedTone === tone.id ? TOOL_COLOR : '#E5E0D8'}`,
                       borderRadius: '4px',
-                      fontSize: '11px',
+                      fontSize: '10px',
                       fontWeight: 600,
-                      letterSpacing: '0.08em',
                     }}
                   >
                     {tone.label}
@@ -166,29 +221,28 @@ export default function ScriptsTool() {
               </div>
             </div>
 
-            {/* 04 / EMOTIONAL TRIGGER */}
+            {/* 04 / TRIGGER */}
             <div>
-              <h3 className="flex items-baseline gap-2 mb-4">
+              <h3 className="flex items-baseline gap-2 mb-3">
                 <span className="text-xs font-semibold tracking-widest" style={{ color: TOOL_COLOR }}>04 /</span>
-                <span style={{ fontFamily: 'Playfair Display, serif', fontStyle: 'italic', fontSize: '18px' }}>
+                <span style={{ fontFamily: 'Playfair Display, serif', fontStyle: 'italic', fontSize: '16px' }}>
                   Trigger
                 </span>
-                <span className="text-xs text-gray-400 ml-2">(optional)</span>
+                <span className="text-xs text-gray-400">(optional)</span>
               </h3>
               <div className="flex flex-wrap gap-2">
                 {TRIGGERS.map((trigger) => (
                   <button
                     key={trigger.id}
                     onClick={() => setSelectedTrigger(selectedTrigger === trigger.id ? null : trigger.id)}
-                    className="px-4 py-2 transition-all duration-200"
+                    className="px-3 py-2 transition-all duration-200"
                     style={{
                       backgroundColor: selectedTrigger === trigger.id ? TOOL_COLOR : 'white',
                       color: selectedTrigger === trigger.id ? 'white' : '#2C2318',
                       border: `1px solid ${selectedTrigger === trigger.id ? TOOL_COLOR : '#E5E0D8'}`,
                       borderRadius: '4px',
-                      fontSize: '11px',
+                      fontSize: '10px',
                       fontWeight: 600,
-                      letterSpacing: '0.08em',
                     }}
                   >
                     {trigger.label}
@@ -199,186 +253,182 @@ export default function ScriptsTool() {
           </div>
 
           {/* MIDDLE PANEL - Input */}
-          <div className="lg:col-span-4 p-6 lg:p-8 flex flex-col border-r" style={{ borderColor: 'rgba(44, 35, 24, 0.1)' }}>
-            <div className="flex items-center justify-between mb-4">
-              <h3 style={{ fontFamily: 'Playfair Display, serif', fontStyle: 'italic', fontSize: '20px' }}>
+          <div className="lg:col-span-4 p-4 lg:p-6 flex flex-col border-b lg:border-b-0 lg:border-r" style={{ borderColor: 'rgba(44, 35, 24, 0.1)' }}>
+            <div className="flex items-center justify-between mb-3">
+              <h3 style={{ fontFamily: 'Playfair Display, serif', fontStyle: 'italic', fontSize: '18px' }}>
                 Concept
               </h3>
               <span className="text-xs tracking-wider text-gray-400">
-                TYPE_HERE
+                {wordCount} words
               </span>
             </div>
             
-            <div 
-              className="flex-1 mb-4 p-5 flex flex-col"
-              style={{ 
+            <textarea
+              value={concept}
+              onChange={(e) => setConcept(e.target.value)}
+              placeholder="What's your video about? Paste a script to analyze or describe your idea..."
+              className="flex-1 p-4 resize-none focus:outline-none focus:ring-2 focus:ring-opacity-50 min-h-[200px] lg:min-h-0"
+              style={{
                 backgroundColor: '#F8F6F3',
                 border: '1px solid #E5E0D8',
                 borderRadius: '4px',
-                minHeight: '280px'
+                fontFamily: 'system-ui, sans-serif',
+                fontSize: '14px',
+                lineHeight: '1.7',
+                color: '#2C2318',
               }}
-            >
-              <textarea
-                value={concept}
-                onChange={(e) => setConcept(e.target.value)}
-                placeholder="What's your video about? A topic, an idea, a story you want to tell..."
-                className="flex-1 bg-transparent resize-none focus:outline-none"
-                style={{
-                  fontFamily: 'system-ui, -apple-system, sans-serif',
-                  fontSize: '15px',
-                  lineHeight: '1.8',
-                  color: '#2C2318',
-                }}
-              />
-              <div className="flex items-center justify-between pt-4 border-t" style={{ borderColor: '#E5E0D8' }}>
-                <div className="flex items-center gap-2">
-                  <button className="p-2 hover:bg-white rounded transition-colors">
-                    <span className="text-gray-400">📋</span>
-                  </button>
-                  <button className="p-2 hover:bg-white rounded transition-colors">
-                    <span className="text-gray-400">🔗</span>
-                  </button>
-                </div>
-                <span className="text-xs tracking-wider text-gray-400">
-                  WORD COUNT: {wordCount.toString().padStart(3, '0')}
-                </span>
-              </div>
-            </div>
+            />
 
-            <span className="text-xs text-gray-400 mb-4 block">
-              PROCESSING... ✧
-            </span>
+            {error && (
+              <div className="mt-3 p-3 bg-red-50 border border-red-200 rounded text-red-700 text-sm">
+                {error}
+              </div>
+            )}
 
             <button
-              onClick={() => setIsGenerating(true)}
+              onClick={handleGenerate}
               disabled={!concept.trim() || isGenerating}
-              className="py-4 px-6 transition-all duration-200 hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              className="mt-4 py-3 px-6 transition-all duration-200 hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               style={{
                 backgroundColor: TOOL_COLOR,
                 color: 'white',
                 borderRadius: '4px',
                 fontSize: '12px',
                 fontWeight: 600,
-                letterSpacing: '0.15em',
+                letterSpacing: '0.1em',
               }}
             >
-              <span>✦</span>
-              <span>GENERATE SCRIPT</span>
+              {isGenerating ? (
+                <>
+                  <span className="animate-spin">⟳</span>
+                  <span>GENERATING...</span>
+                </>
+              ) : (
+                <>
+                  <span>✦</span>
+                  <span>GENERATE SCRIPT</span>
+                </>
+              )}
             </button>
           </div>
 
-          {/* RIGHT PANEL - Output Preview */}
-          <div className="lg:col-span-4 p-6 lg:p-8 flex flex-col bg-white">
-            <div className="flex items-center justify-between mb-6">
-              <h3 style={{ fontFamily: 'Playfair Display, serif', fontStyle: 'italic', fontSize: '20px' }}>
+          {/* RIGHT PANEL - Output */}
+          <div className="lg:col-span-4 p-4 lg:p-6 flex flex-col bg-white">
+            <div className="flex items-center justify-between mb-4">
+              <h3 style={{ fontFamily: 'Playfair Display, serif', fontStyle: 'italic', fontSize: '18px' }}>
                 Output
               </h3>
-              <div className="flex items-center gap-2">
-                <button className="p-2 hover:bg-gray-100 rounded">
-                  <span className="text-xs">⊞</span>
+              {result && (
+                <button 
+                  onClick={() => copyToClipboard(result.script)}
+                  className="text-xs px-3 py-1.5 rounded hover:bg-gray-100 transition-colors"
+                  style={{ border: '1px solid #E5E0D8' }}
+                >
+                  📋 Copy
                 </button>
-                <button className="p-2 hover:bg-gray-100 rounded">
-                  <span className="text-xs">☰</span>
-                </button>
-              </div>
+              )}
             </div>
 
-            {/* Preview Cards */}
-            <div className="space-y-4 flex-1">
-              {/* Script Preview Card */}
-              <div 
-                className="p-5 border"
-                style={{ 
-                  borderColor: TOOL_COLOR,
-                  borderRadius: '4px',
-                  borderLeftWidth: '3px'
-                }}
-              >
-                <div className="flex items-center justify-between mb-3">
-                  <span 
-                    className="px-2 py-1 text-xs font-semibold tracking-wider"
+            {!result && !isGenerating && (
+              <div className="flex-1 flex items-center justify-center text-gray-400 text-sm italic">
+                Your generated script will appear here...
+              </div>
+            )}
+
+            {isGenerating && (
+              <div className="flex-1 flex items-center justify-center">
+                <div className="text-center">
+                  <div className="text-2xl mb-2 animate-pulse">✦</div>
+                  <div className="text-sm text-gray-400">Generating your script...</div>
+                </div>
+              </div>
+            )}
+
+            {result && (
+              <div className="flex-1 overflow-auto space-y-4">
+                {/* Score/Grade */}
+                {(result.grade || result.score) && (
+                  <div className="flex gap-3">
+                    {result.grade && (
+                      <div 
+                        className="px-4 py-3 text-center rounded"
+                        style={{ backgroundColor: '#F8F6F3' }}
+                      >
+                        <div className="text-xs text-gray-400 mb-1">GRADE</div>
+                        <div style={{ fontFamily: 'Playfair Display, serif', fontSize: '28px', color: TOOL_COLOR }}>
+                          {result.grade}
+                        </div>
+                      </div>
+                    )}
+                    {result.score && (
+                      <div 
+                        className="px-4 py-3 text-center rounded flex-1"
+                        style={{ backgroundColor: '#F8F6F3' }}
+                      >
+                        <div className="text-xs text-gray-400 mb-1">SCORE</div>
+                        <div style={{ fontFamily: 'Playfair Display, serif', fontSize: '28px' }}>
+                          {result.score}<span className="text-sm text-gray-400">/100</span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Stats */}
+                <div className="grid grid-cols-2 gap-3">
+                  <div 
+                    className="p-3 text-center rounded"
+                    style={{ border: '1px solid #E5E0D8' }}
+                  >
+                    <div className="text-xs text-gray-400 mb-1">DURATION</div>
+                    <div style={{ fontFamily: 'Playfair Display, serif', fontSize: '20px' }}>
+                      {result.estimated_duration || '--'}
+                      <span className="text-xs text-gray-400">s</span>
+                    </div>
+                  </div>
+                  <div 
+                    className="p-3 text-center rounded"
+                    style={{ border: '1px solid #E5E0D8' }}
+                  >
+                    <div className="text-xs text-gray-400 mb-1">HOOK</div>
+                    <div style={{ fontFamily: 'Playfair Display, serif', fontSize: '20px' }}>
+                      {result.hook_strength || '--'}
+                      <span className="text-xs text-gray-400">/100</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Script */}
+                <div 
+                  className="p-4 rounded"
+                  style={{ 
+                    backgroundColor: '#F8F6F3',
+                    border: '1px solid #E5E0D8',
+                  }}
+                >
+                  <div className="text-xs text-gray-400 mb-2 tracking-wider">SCRIPT</div>
+                  <div 
+                    className="whitespace-pre-wrap"
                     style={{ 
-                      backgroundColor: `${TOOL_COLOR}15`,
-                      color: TOOL_COLOR,
-                      borderRadius: '2px'
+                      fontFamily: 'system-ui, sans-serif',
+                      fontSize: '14px',
+                      lineHeight: '1.8',
+                      color: '#2C2318',
                     }}
                   >
-                    SCRIPT
-                  </span>
-                  <button className="text-gray-400 hover:text-gray-600">
-                    <span>📋</span>
-                  </button>
-                </div>
-                <p className="text-sm text-gray-400 italic">
-                  Your generated script will appear here...
-                </p>
-              </div>
-
-              {/* Stats Preview */}
-              <div className="grid grid-cols-2 gap-3">
-                <div 
-                  className="p-4 text-center"
-                  style={{ 
-                    border: '1px solid #E5E0D8',
-                    borderRadius: '4px'
-                  }}
-                >
-                  <span className="text-xs tracking-wider text-gray-400 block mb-1">EST. DURATION</span>
-                  <span style={{ fontFamily: 'Playfair Display, serif', fontSize: '24px' }}>--</span>
-                  <span className="text-xs text-gray-400">sec</span>
-                </div>
-                <div 
-                  className="p-4 text-center"
-                  style={{ 
-                    border: '1px solid #E5E0D8',
-                    borderRadius: '4px'
-                  }}
-                >
-                  <span className="text-xs tracking-wider text-gray-400 block mb-1">HOOK STRENGTH</span>
-                  <span style={{ fontFamily: 'Playfair Display, serif', fontSize: '24px' }}>--</span>
-                  <span className="text-xs text-gray-400">/100</span>
-                </div>
-              </div>
-
-              {/* Structure Preview */}
-              <div 
-                className="p-4"
-                style={{ 
-                  backgroundColor: '#F8F6F3',
-                  borderRadius: '4px'
-                }}
-              >
-                <span className="text-xs tracking-wider text-gray-400 block mb-3">STRUCTURE BREAKDOWN</span>
-                <div className="space-y-2">
-                  <div className="flex items-center gap-3">
-                    <span className="w-2 h-2 rounded-full" style={{ backgroundColor: TOOL_COLOR }}></span>
-                    <span className="text-xs text-gray-500">Hook (0-3s)</span>
-                    <div className="flex-1 h-1 bg-gray-200 rounded"></div>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <span className="w-2 h-2 rounded-full" style={{ backgroundColor: TOOL_COLOR, opacity: 0.7 }}></span>
-                    <span className="text-xs text-gray-500">Setup (3-15s)</span>
-                    <div className="flex-1 h-1 bg-gray-200 rounded"></div>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <span className="w-2 h-2 rounded-full" style={{ backgroundColor: TOOL_COLOR, opacity: 0.5 }}></span>
-                    <span className="text-xs text-gray-500">Payoff (15-30s)</span>
-                    <div className="flex-1 h-1 bg-gray-200 rounded"></div>
+                    {result.script}
                   </div>
                 </div>
               </div>
-            </div>
+            )}
 
             {/* Footer */}
             <div 
-              className="pt-4 mt-6 border-t flex items-center justify-between"
+              className="pt-4 mt-4 border-t text-center"
               style={{ borderColor: 'rgba(44, 35, 24, 0.1)' }}
             >
               <span className="text-xs tracking-widest text-gray-400">
                 SCRIPTKIT COLLECTIVE
-              </span>
-              <span className="text-xs tracking-wider text-gray-400">
-                VECTORS: 0
               </span>
             </div>
           </div>
